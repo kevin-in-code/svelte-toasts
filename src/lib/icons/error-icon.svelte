@@ -1,0 +1,12 @@
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	aria-hidden="true"
+	preserveAspectRatio="xMidYMid meet"
+	width="1em"
+	height="0.775em"
+	viewBox="0 0 20 15.5"
+	style="vertical-align: baseline; overflow: visible; display: block;"
+>
+	<path d="M10,1c-5,0-9,4-9,9s4,9,9,9s9-4,9-9S15,1,10,1z M13.5,14.5l-8-8l1-1l8,8L13.5,14.5z" />
+	<path d="M13.5,14.5l-8-8l1-1l8,8L13.5,14.5z" data-icon-path="inner-path" opacity="0" />
+</svg>

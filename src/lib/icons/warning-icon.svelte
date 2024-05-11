@@ -1,0 +1,18 @@
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	aria-hidden="true"
+	preserveAspectRatio="xMidYMid meet"
+	width="1em"
+	height="0.775em"
+	viewBox="0 0 20 15.5"
+	style="vertical-align: baseline; overflow: visible; display: block;"
+>
+	<path
+		d="M10,1c-5,0-9,4-9,9s4,9,9,9s9-4,9-9S15,1,10,1z M9.2,5h1.5v7H9.2V5z M10,16c-0.6,0-1-0.4-1-1s0.4-1,1-1	s1,0.4,1,1S10.6,16,10,16z"
+	/>
+	<path
+		d="M9.2,5h1.5v7H9.2V5z M10,16c-0.6,0-1-0.4-1-1s0.4-1,1-1s1,0.4,1,1S10.6,16,10,16z"
+		data-icon-path="inner-path"
+		opacity="0"
+	/>
+</svg>
