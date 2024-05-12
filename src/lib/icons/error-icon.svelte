@@ -1,12 +1,19 @@
 <svg
-	xmlns="http://www.w3.org/2000/svg"
-	aria-hidden="true"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
 	preserveAspectRatio="xMidYMid meet"
-	width="1em"
-	height="0.775em"
-	viewBox="0 0 20 15.5"
-	style="vertical-align: baseline; overflow: visible; display: block;"
 >
-	<path d="M10,1c-5,0-9,4-9,9s4,9,9,9s9-4,9-9S15,1,10,1z M13.5,14.5l-8-8l1-1l8,8L13.5,14.5z" />
-	<path d="M13.5,14.5l-8-8l1-1l8,8L13.5,14.5z" data-icon-path="inner-path" opacity="0" />
+  <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+  <path
+    d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"
+  />
 </svg>
+
+<style>
+  svg {
+    line-height: 1;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.18em;
+  }
+</style>

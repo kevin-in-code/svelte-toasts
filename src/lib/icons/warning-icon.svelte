@@ -1,18 +1,17 @@
 <svg
-	xmlns="http://www.w3.org/2000/svg"
-	aria-hidden="true"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
 	preserveAspectRatio="xMidYMid meet"
-	width="1em"
-	height="0.775em"
-	viewBox="0 0 20 15.5"
-	style="vertical-align: baseline; overflow: visible; display: block;"
 >
-	<path
-		d="M10,1c-5,0-9,4-9,9s4,9,9,9s9-4,9-9S15,1,10,1z M9.2,5h1.5v7H9.2V5z M10,16c-0.6,0-1-0.4-1-1s0.4-1,1-1	s1,0.4,1,1S10.6,16,10,16z"
-	/>
-	<path
-		d="M9.2,5h1.5v7H9.2V5z M10,16c-0.6,0-1-0.4-1-1s0.4-1,1-1s1,0.4,1,1S10.6,16,10,16z"
-		data-icon-path="inner-path"
-		opacity="0"
-	/>
+  <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+  <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24V264c0 13.3-10.7 24-24 24s-24-10.7-24-24V152c0-13.3 10.7-24 24-24zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/>
 </svg>
+
+<style>
+  svg {
+    line-height: 1;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.18em;
+  }
+</style>

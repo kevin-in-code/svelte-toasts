@@ -4,6 +4,7 @@
   import { tweened } from 'svelte/motion';
   import CloseIcon from './icons/close-icon.svelte';
   import { TOAST_CONTEXT, type ToastContext } from './context.js';
+	import { linear } from 'svelte/easing';
 
   export let category: string | undefined;
 
@@ -47,7 +48,8 @@
   }
 
   const progress = tweened(1, {
-    duration: duration ?? 0
+    duration: duration ?? 0,
+    easing: linear,
   });
 
   function cancelTimer() {
@@ -210,7 +212,16 @@
 <style>
   .toast-category-icon {
     font-size: var(--toast-icon-size);
+    line-height: 0;
     color: var(--toast-icon-color);
+  }
+
+  .toast-close-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1em;
+    height: 1em;
   }
 
   .toast-item {

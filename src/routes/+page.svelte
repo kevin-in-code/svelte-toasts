@@ -49,9 +49,9 @@
   <div>
       <ToastView />
   </div>
-  <div>
+  <!-- <div>
     <ToastView />
-  </div>
+  </div> -->
 
 <!-- <div class="controls">
   <fieldset>
