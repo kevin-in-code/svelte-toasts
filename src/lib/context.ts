@@ -1,102 +1,187 @@
-import { writable, type Readable, type Writable, readonly, get } from 'svelte/store';
-import { marker } from './themes.js';
-import type { ToastItem, ToastPosition, ToastCategory, ToastTheme } from './types.js';
+import { type Writable, get, readonly, writable } from 'svelte/store';
 
-type ToastFields = Omit<ToastItem, 'id' | 'createdAt'>;
+import type {
+  ToastCollection,
+  ToastControl,
+  ToastInitFields,
+  ToastItem,
+  ToastUpdateFields,
+} from './types.js';
 
-interface ToastContextOptions {
-  theme?: ToastTheme;
-  defaultPosition?: ToastPosition;
-}
+let nextListId = 0;
+let nextToastId = 0;
 
-interface ToastControl {
-  dismiss: () => void;
-  update: (category: ToastCategory) => void;
-}
+const queue: Writable<ToastCollection> = writable({ id: nextListId++, list: [] });
+export const activeToasts = readonly(queue);
 
-interface ToastRaiseFunction {
-  (toast: ToastFields): () => void;
-  (position: ToastPosition, toast: ToastFields): () => void;
-}
+const updateToastList = (fn: (list: ToastItem[]) => ToastItem[]) => {
+  queue.update((collection) => ({
+    id: collection.id,
+    list: fn(collection.list),
+  }));
+};
 
-export interface ToastContext {
-  theme: Writable<ToastTheme>;
-  defaultPosition: Writable<ToastPosition>;
-  queues: Record<ToastPosition, Readable<ToastItem[]>>;
+const newToast = (fields: ToastInitFields): ToastItem => {
+  const id = ++nextToastId;
+  const { expiresIn, onClose, onExpand, onCollapse, ...remainingFields } = fields;
+  const now = new Date();
 
-  raise: ToastRaiseFunction;
-}
+  const dismiss = () => removeToast(id);
+  const focus = () => focusOnToast(id);
+  const cancelFocus = () => cancelFocusOnToast(id);
+  const transferFocusBackward = () => transferToastFocusBackward(id);
+  const transferFocusForward = () => transferToastFocusForward(id);
+  const update = (fields: ToastUpdateFields) => updateToast(id, fields);
+  const expand = (expanded?: boolean) => updateToast(id, { isExpanded: expanded ?? true });
 
-export function createToastContext(options?: ToastContextOptions): ToastContext {
-  const { theme = marker, defaultPosition = 'top-right' } = options ?? {};
-
-  const themeStore = writable<ToastTheme>(theme);
-
-  const defaultPositionStore = writable<ToastPosition>(defaultPosition);
-
-  const queues: Record<ToastPosition, Writable<ToastItem[]>> = {
-    'top-left': writable([]),
-    'top': writable([]),
-    'top-right': writable([]),
-    'left': writable([]),
-    'center': writable([]),
-    'right': writable([]),
-    'bottom-left': writable([]),
-    'bottom': writable([]),
-    'bottom-right': writable([]),
+  const closeHandler = () => {
+    dismiss();
+    onClose?.();
   };
 
-  const readonlyQueues: Record<ToastPosition, Readable<ToastItem[]>> = {
-    'top-left': readonly(queues['top-left']),
-    'top': readonly(queues['top']),
-    'top-right': readonly(queues['top-right']),
-    'left': readonly(queues['left']),
-    'center': readonly(queues['center']),
-    'right': readonly(queues['right']),
-    'bottom-left': readonly(queues['bottom-left']),
-    'bottom': readonly(queues['bottom']),
-    'bottom-right': readonly(queues['bottom-right']),
+  const expandHandler = () => {
+    expand(true);
+    onExpand?.();
   };
 
-  let nextID = 0;
+  const collapseHandler = () => {
+    expand(false);
+    onCollapse?.();
+  };
 
-  function raise(toast: ToastFields): () => void;
-  function raise(position: ToastPosition, toast: ToastFields): () => void;
-  function raise(toastOrPosition: ToastPosition | ToastFields, possibleToast?: ToastFields) {
-    const toastId = ++nextID;
-    const firstIsString = typeof toastOrPosition === 'string' || toastOrPosition instanceof String;
+  return {
+    ...remainingFields,
+    id,
+    createdAt: now,
+    expiresAt: !expiresIn ? undefined : new Date(now.getTime() + expiresIn),
+    timeout: !expiresIn ? undefined : setTimeout(dismiss, expiresIn),
+    dismiss,
+    focus,
+    cancelFocus,
+    transferFocusBackward,
+    transferFocusForward,
+    update,
+    expand,
+    onClose: closeHandler,
+    onExpand: expandHandler,
+    onCollapse: collapseHandler,
+  };
+};
 
-    const toastFields: ToastFields = firstIsString ? possibleToast! : toastOrPosition!;
+const addToast = (fields: ToastInitFields): ToastItem => {
+  const toast = newToast(fields);
+  updateToastList((list) => {
+    return [...list, toast];
+  });
+  return toast;
+};
 
-    const position: ToastPosition = firstIsString
-      ? (toastOrPosition as ToastPosition)
-      : get(defaultPositionStore);
+const removeToast = (id: number) => {
+  updateToastList((list) => {
+    const index = list.findIndex((item) => item.id === id);
+    if (index < 0) return list;
 
-    function removeToast() {
-      queues[position].update((items) => items.filter((item) => item.id !== toastId));
+    if (list.length > 1 && list[index].focusableElement?.matches(':focus-within')) {
+      const nextToFocus = index + 1 < list.length ? index + 1 : index - 1;
+      list[nextToFocus].focusableElement?.focus();
     }
 
-    const toast: ToastItem = {
-      ...toastFields,
-      id: toastId,
-      createdAt: new Date(),
-      onClose: () => {
-        removeToast();
-        toastFields.onClose?.();
-      },
-    };
+    const newCollection = list.slice(0, index);
+    newCollection.push(...list.slice(index + 1));
+    return newCollection;
+  });
+};
 
-    queues[position].update((items) => [...items, toast]);
+const focusOnToast = (id: number) => {
+  const toast = get(queue).list.find((item) => item.id === id);
+  toast?.focusableElement?.focus();
+};
 
-    return removeToast;
+const cancelFocusOnToast = (id: number) => {
+  const toast = get(queue).list.find((item) => item.id === id);
+  toast?.focusableElement?.blur();
+};
+
+const transferToastFocusBackward = (id: number) => {
+  const list = get(queue).list;
+  const index = list.findIndex((item) => item.id === id);
+  if (list.length > 1 && list[index].focusableElement?.matches(':focus-within')) {
+    list[(index + list.length - 1) % list.length].focusableElement?.focus();
+  }
+};
+
+const transferToastFocusForward = (id: number) => {
+  const list = get(queue).list;
+  const index = list.findIndex((item) => item.id === id);
+  if (list.length > 1 && list[index].focusableElement?.matches(':focus-within')) {
+    list[(index + 1) % list.length].focusableElement?.focus();
+  }
+};
+
+const computeUpdatedToast = (now: Date, toast: ToastItem, fieldsToUpdate: ToastUpdateFields) => {
+  const { expiresIn, isExpanded, ...remainingFields } = fieldsToUpdate;
+
+  const setIsExpanded = 'isExpanded' in fieldsToUpdate;
+
+  const clearExpiresIn =
+    (expiresIn === undefined && 'expiresIn' in fieldsToUpdate) || setIsExpanded;
+
+  if (toast.timeout !== null && toast.timeout !== undefined && (expiresIn || clearExpiresIn)) {
+    clearTimeout(toast.timeout);
   }
 
   return {
-    theme: themeStore,
-    defaultPosition: defaultPositionStore,
-    queues: readonlyQueues,
-    raise,
+    ...toast,
+    ...remainingFields,
+    isExpanded: setIsExpanded ? isExpanded ?? false : toast.isExpanded,
+    expiresAt: clearExpiresIn
+      ? undefined
+      : !expiresIn
+        ? toast.expiresAt
+        : new Date(now.getTime() + expiresIn),
+    timeout: clearExpiresIn
+      ? undefined
+      : !expiresIn
+        ? toast.timeout
+        : setTimeout(toast.dismiss, expiresIn),
   };
-}
+};
 
-export const TOAST_CONTEXT = {};
+const updateToast = (id: number, fields: ToastUpdateFields) => {
+  updateToastList((list) => {
+    const now = new Date();
+    const index = list.findIndex((item) => item.id === id);
+    if (index < 0) return list;
+
+    const toast = list[index];
+    const updatedToast = computeUpdatedToast(now, toast, fields);
+
+    const newCollection = list.slice(0, index);
+    newCollection.push(updatedToast, ...list.slice(index + 1));
+    return newCollection;
+  });
+};
+
+export const updateToasts = (fieldsToUpdate: (toast: ToastItem) => ToastUpdateFields) => {
+  updateToastList((list) => {
+    const now = new Date();
+    return list.map((toast) => {
+      const fields = fieldsToUpdate(toast);
+      return computeUpdatedToast(now, toast, fields);
+    });
+  });
+};
+
+export const raiseToast = (fields: ToastInitFields): ToastControl => {
+  const toast = addToast(fields);
+  return {
+    dismiss: toast.dismiss,
+    focus: toast.focus,
+    update: toast.update,
+    expand: toast.expand,
+  };
+};
+
+export const clearToasts = () => {
+  queue.set({ id: nextListId++, list: [] });
+};

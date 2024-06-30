@@ -1,6 +1,6 @@
-import type { ComponentType } from 'svelte';
+import type { ComponentType, SvelteComponent } from 'svelte';
 
-export type ToastPosition =
+export type ToastViewZone =
   | 'top-left'
   | 'top'
   | 'top-right'
@@ -11,6 +11,8 @@ export type ToastPosition =
   | 'bottom'
   | 'bottom-right';
 
+export type ToastTransitionName = 'left' | 'right' | 'top' | 'bottom' | 'fade' | null;
+
 export interface ToastThemeColors {
   accent: string;
   background: string;
@@ -19,47 +21,113 @@ export interface ToastThemeColors {
   focus: string;
   icon: string;
   progress: string;
-}
-
-export interface ToastCategoryTheme {
-  title?: string;
-  colors: { accent: string } & Partial<ToastThemeColors>;
-}
-
-export interface ToastThemeStyle {
-  borderRadius?: string;
-  focus?: 'dashed' | 'winged' | 'framed';
-  fontSize?: string;
-  width?: string;
+  contentBackground: string;
+  contentText: string;
 }
 
 export interface ToastTheme {
-  icons?: Record<string, ComponentType>;
-  titles?: Record<string, string>;
+  name: string;
+  component: {
+    icon: ToastIconComponent;
+    title: ToastTitleComponent;
+    design: ToastDesignComponent;
+  };
   colors?: Record<string, Partial<ToastThemeColors>>;
-  style?: ToastThemeStyle;
 }
 
-export interface ToastThemeInstance {
-  icon?: ComponentType;
-  title?: string;
-  colors: ToastThemeColors;
-  style: ToastThemeStyle;
-}
+export type ToastStatus = string | { expanded?: string; collapsed?: string };
 
-export interface ToastItem {
-  id: number;
-  createdAt: Date;
-
+interface ToastItemFields {
   category?: string;
   topic: string;
-  status?: string;
+  status?: ToastStatus;
+  isExpanded?: boolean;
+  clipTitleOnCollapse?: boolean;
+  showExpiryCountdown?: boolean;
+  showStatusInlineWhenCollapsed?: boolean;
+  taskProgress?: number;
+  taskScale?: number;
   body?: string | string[] | ComponentType;
+}
 
-  duration?: number | null;
-
+interface ToastItemEvents {
   onClick?: () => void;
   onExpand?: () => void;
   onCollapse?: () => void;
   onClose?: () => void;
 }
+
+interface ToastItemTransientFields {
+  expiresIn?: number;
+  focusableElement?: HTMLElement;
+}
+
+export type ToastInitFields = ToastItemFields & ToastItemTransientFields & ToastItemEvents;
+export type ToastUpdateFields = Partial<ToastItemFields & ToastItemTransientFields>;
+
+export interface ToastItem extends ToastItemFields, ToastItemEvents {
+  id: number;
+  createdAt: Date;
+  expiresAt?: Date | null;
+  focusableElement?: HTMLElement;
+  timeout?: ReturnType<typeof setTimeout>;
+
+  dismiss: () => void;
+  focus: () => void;
+  cancelFocus: () => void;
+  transferFocusBackward: () => void;
+  transferFocusForward: () => void;
+  update: (fields: ToastUpdateFields) => void;
+  expand: (expanded?: boolean) => void;
+}
+
+export type ToastCollection = {
+  id: number;
+  list: ToastItem[];
+};
+
+export interface ToastControl {
+  dismiss: () => void;
+  focus: () => void;
+  update: (fields: ToastUpdateFields) => void;
+  expand: (expanded?: boolean) => void;
+}
+
+export type ToastAnimationState = 'resting' | 'preparing' | 'unrolling' | 'unrolled';
+
+interface ToastDesignProps {
+  title: ToastTitleComponent;
+  icon?: ToastIconComponent | undefined;
+
+  clickTakesFocus: boolean;
+  category: string;
+  topic: string;
+  status: ToastStatus | undefined;
+  body: string | string[] | ComponentType;
+
+  showStatusInline: boolean;
+  showExpiryCountdown: boolean;
+  expiresIn: number | undefined;
+
+  taskProgress: number | undefined;
+  taskScale: number;
+
+  isExpanded: boolean;
+}
+
+interface ToastDesignEvents {
+  click: CustomEvent<void>;
+  expand: CustomEvent<void>;
+  collapse: CustomEvent<void>;
+  close: CustomEvent<void>;
+  cancelFocus: CustomEvent<void>;
+  next: CustomEvent<void>;
+  previous: CustomEvent<void>;
+  focusable: CustomEvent<HTMLElement>;
+}
+
+export type ToastDesignComponent = ComponentType<
+  SvelteComponent<ToastDesignProps, ToastDesignEvents>
+>;
+export type ToastIconComponent = ComponentType<SvelteComponent<{ category: string | undefined }>>;
+export type ToastTitleComponent = ComponentType<SvelteComponent<{ category: string | undefined }>>;

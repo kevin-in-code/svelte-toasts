@@ -1,83 +1,91 @@
 <script lang="ts">
-  import {
-    onMount,
-    type ComponentType,
-    type SvelteComponent,
-    createEventDispatcher,
-    getContext,
-  } from 'svelte';
-  import { resolveThemeInstance } from './themes.js';
-  import { tweened } from 'svelte/motion';
-  import CloseIcon from './icons/close-icon.svelte';
-  import { TOAST_CONTEXT, type ToastContext } from './context.js';
+  import { type ComponentType, createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { linear } from 'svelte/easing';
+  import { tweened } from 'svelte/motion';
 
-  export let category: string | undefined;
+  import CloseIcon from './icons/close-icon.svelte';
+  import type {
+    ToastAnimationState,
+    ToastIconComponent,
+    ToastStatus,
+    ToastTitleComponent,
+  } from './types.js';
 
+  export let title: ToastTitleComponent;
+  export let icon: ToastIconComponent | undefined = undefined;
+
+  export let clickTakesFocus: boolean;
+  export let category: string;
   export let topic: string;
-  export let status: string | undefined;
-  export let body: string | string[] | ComponentType<SvelteComponent> = '';
+  export let status: ToastStatus | undefined;
+  export let body: string | string[] | ComponentType;
 
-  export let duration: number | null | undefined = 3000;
+  export let showStatusInline: boolean;
+  export let showExpiryCountdown: boolean;
+  export let expiresIn: number | undefined;
 
-  const context = getContext<ToastContext>(TOAST_CONTEXT);
-  const themeStore = context.theme;
-  const theme = resolveThemeInstance($themeStore, category);
+  export let taskProgress: number | undefined;
+  export let taskScale: number;
 
-  const dispatch = createEventDispatcher<{
-    focusin: void;
-    focusout: void;
-    click: void;
-    expand: void;
-    collapse: void;
-    close: void;
-    next: void;
-    previous: void;
-    move: void;
-  }>();
+  export let isExpanded: boolean;
 
-  let headerButton: HTMLButtonElement;
+  export let showMidSeparator: 'always' | 'when-no-category' | 'never' = 'never';
+  export let hasMultistageExpansion: boolean = false;
+  export let clipTitle: boolean = false;
 
-  const headerPadding = '0.75em';
-  const iconSize = '1.5em';
-  const iconGap = '0.75em';
-
-  let isExpanded = false;
   let isClosed = false;
   let isClicked = false;
   let isHeaderFocused = false;
 
-  let timeout = duration ? setTimeout(close, duration) : null;
+  let expiryTimeout = expiresIn ? setTimeout(() => {}, expiresIn) : null;
 
-  export function focus() {
-    headerButton.focus();
-  }
+  let state: ToastAnimationState;
 
-  const progress = tweened(1, {
-    duration: duration ?? 0,
+  let headerButton: HTMLElement;
+  let ready: boolean;
+
+  let measureTopConstrained: HTMLElement;
+  let measureTopUnconstrained: HTMLElement;
+  let measureBottom: HTMLElement;
+  let topConstainedHeight: number;
+  let topUnconstrainedHeight: number;
+  let bottomHeight: number;
+
+  let observer: ResizeObserver;
+
+  const dispatch = createEventDispatcher<{
+    click: void;
+    expand: void;
+    collapse: void;
+    close: void;
+    cancelFocus: void;
+
+    next: void;
+    previous: void;
+
+    focusable: HTMLElement;
+  }>();
+
+  const expiryCountdown = tweened(1, {
+    duration: expiresIn ?? 0,
     easing: linear,
   });
 
+  function isString<T>(value: string | T): value is string {
+    return typeof value === 'string' || value instanceof String;
+  }
+
   function cancelTimer() {
-    if (timeout !== null) {
-      clearTimeout(timeout);
+    if (expiryTimeout !== null) {
+      clearTimeout(expiryTimeout);
     }
-    duration = undefined;
+    expiresIn = undefined;
   }
 
   function close() {
     if (isClosed) return;
-
     isClosed = true;
     dispatch('close');
-  }
-
-  function onFocusIn() {
-    dispatch('focusin');
-  }
-
-  function onFocusOut() {
-    dispatch('focusout');
   }
 
   function onHeaderFocus() {
@@ -96,8 +104,7 @@
       dispatch('click');
     }
     if (contentExists(body)) {
-      isExpanded = !isExpanded;
-      if (isExpanded) {
+      if (!isExpanded) {
         dispatch('expand');
       } else {
         dispatch('collapse');
@@ -109,14 +116,24 @@
     if (!isHeaderFocused) return;
     switch (e.key) {
       case 'ArrowUp':
+        e.preventDefault();
+        e.stopPropagation();
         dispatch('previous');
         break;
       case 'ArrowDown':
+        e.preventDefault();
+        e.stopPropagation();
         dispatch('next');
         break;
       case 'Backspace':
-        dispatch('move');
+        e.preventDefault();
+        e.stopPropagation();
         dispatch('close');
+        break;
+      case 'Escape':
+        e.preventDefault();
+        e.stopPropagation();
+        dispatch('cancelFocus');
         break;
     }
   }
@@ -127,139 +144,382 @@
     close();
   }
 
+  function conditionallyDoNotTakeFocus(e: Event) {
+    if (!clickTakesFocus) e.preventDefault();
+  }
+
+  function doNotTakeFocus(e: Event) {
+    e.preventDefault();
+  }
+
   function contentExists(content: string | string[] | ComponentType) {
     if (Array.isArray(content)) return content.length > 0;
     return !!content;
   }
 
+  function setState(value: ToastAnimationState) {
+    state = value;
+  }
+
+  setState(isExpanded ? 'unrolled' : 'resting');
+
+  async function advanceState() {
+    switch (state) {
+      case 'resting':
+        if (isExpanded) {
+          if (hasMultistageExpansion) {
+            setState('preparing');
+          } else {
+            setState('unrolled');
+          }
+        }
+        break;
+      case 'preparing':
+        if (isExpanded) {
+          setState('unrolling');
+          setTimeout(() => {
+            setState('unrolled');
+          }, 0);
+        }
+        break;
+      case 'unrolling':
+        if (!isExpanded) {
+          setState('preparing');
+          setTimeout(() => {
+            setState('resting');
+          }, 0);
+        }
+        break;
+      case 'unrolled':
+        if (!isExpanded) {
+          setState('unrolling');
+        }
+        break;
+    }
+  }
+
+  function onEndTransition() {
+    if (isExpanded !== undefined) advanceState();
+  }
+
+  $: if (isExpanded !== undefined) {
+    advanceState();
+  }
+
+  onDestroy(() => observer && observer.disconnect());
+
   onMount(() => {
-    if (progress) {
-      progress.set(0);
+    if (ResizeObserver) {
+      observer = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          if (entry.target === measureTopConstrained) {
+            topConstainedHeight = entry.contentRect.height;
+          } else if (entry.target === measureTopUnconstrained) {
+            topUnconstrainedHeight = entry.contentRect.height;
+          } else {
+            bottomHeight = entry.contentRect.height;
+          }
+        }
+      });
+
+      observer.observe(measureTopConstrained);
+      observer.observe(measureTopUnconstrained);
+      observer.observe(measureBottom);
+    }
+
+    if (expiryCountdown) {
+      expiryCountdown.set(0);
     }
   });
+
+  $: headerButton, dispatch('focusable', headerButton);
+
+  setTimeout(() => {
+    ready = true;
+  }, 0);
 </script>
 
-{#if !isClosed}
-  <div
-    class="toast-item"
-    class:toast-item-dashed={theme.style.focus === 'dashed'}
-    class:toast-item-winged={theme.style.focus === 'winged'}
-    class:toast-item-framed={theme.style.focus === 'framed'}
-    class:toast-item-in-focus={isHeaderFocused}
-    tabindex="-1"
-    role="alert"
-    style="
-    --toast-background-color: {theme.colors.background};
-    --toast-text-color: {theme.colors.text};
-    --toast-contrast-color: {theme.colors.contrast};
-    --toast-accent-color: {theme.colors.accent};
-    --toast-icon-color: {theme.colors.icon};
-    --toast-focus-color: {theme.colors.focus};
-    --toast-progress-color: {theme.colors.progress};
-    --toast-header-padding: {headerPadding};
-    --toast-icon-size: {iconSize};
-    --toast-icon-gap: {iconGap};
-    --toast-width: {theme.style.width ?? '22em'};
-    --toast-font-size: {theme.style.fontSize ?? 'inherit'};
-    --toast-border-radius: {theme.style.borderRadius ?? 0};
-    color: {theme.colors.text};
-  "
-  >
-    <button
-      bind:this={headerButton}
-      class="toast-header"
-      type="button"
-      on:click={onHeaderClicked}
-      on:focusin={onFocusIn}
-      on:focusout={onFocusOut}
-      on:focus={onHeaderFocus}
-      on:blur={onHeaderBlur}
-      on:keydown={onHeaderKeyDown}
-    >
-      {#if theme.icon}
-        <span class="toast-category-icon"><svelte:component this={theme.icon} /></span>
-      {/if}
+<div style="position: absolute; left: 0; top: 0; visibility: hidden;">
+  <div class="toast-item" bind:this={measureTopConstrained}>
+    <button class="toast-header resting-side" type="button">
+      <span class="toast-category-icon">
+        <svelte:component this={icon} {category} />
+      </span>
       <div class="toast-text">
-        {#if theme.title}
-          <h3 class="toast-title">{theme.title}</h3>
-        {/if}
-        <p class="toast-topic">{topic}</p>
-        {#if status}
-          <h3 class="toast-status">{status}</h3>
-        {/if}
+        <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
+        <div
+          class:toast-flex-row={clipTitle &&
+            status &&
+            (isString(status) || isString(status.collapsed)) &&
+            showStatusInline}
+        >
+          <p class="toast-topic" class:toast-constrain-text={clipTitle}>
+            {topic}
+          </p>
+          {#if status && (isString(status) || isString(status.collapsed))}
+            <p
+              class="toast-status"
+              class:toast-no-margin={clipTitle &&
+                status &&
+                (isString(status) || isString(status.collapsed)) &&
+                showStatusInline}
+            >
+              {isString(status) ? status : status.collapsed}
+            </p>
+          {/if}
+        </div>
       </div>
-      <button class="toast-close-button" type="button" aria-label="Close" on:click={onCloseClicked}>
+      <button class="toast-close-button" type="button" aria-label="Close">
         <div class="toast-close-icon"><CloseIcon /></div>
       </button>
     </button>
-    {#if isExpanded}
-      <div class="toast-content-separator" />
-    {:else if !isClicked && !!duration && !Number.isNaN(duration)}
-      <progress value={$progress} />
-    {:else if !isClicked && (Number.isNaN(duration) || duration === null)}
-      <progress></progress>
-    {/if}
-    {#if isExpanded && contentExists(body)}
+  </div>
+
+  <div class="toast-item" bind:this={measureTopUnconstrained}>
+    <button class="toast-header resting-side" type="button">
+      <span class="toast-category-icon">
+        <svelte:component this={icon} {category} />
+      </span>
+      <div class="toast-text">
+        <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
+        <div>
+          <p class="toast-topic">
+            {topic}
+          </p>
+          {#if status && (isString(status) || isString(status.collapsed))}
+            <p
+              class="toast-status"
+              class:toast-no-margin={clipTitle &&
+                status &&
+                (isString(status) || isString(status.collapsed)) &&
+                showStatusInline}
+            >
+              {isString(status) ? status : status.collapsed}
+            </p>
+          {/if}
+        </div>
+      </div>
+      <button class="toast-close-button" type="button" aria-label="Close">
+        <div class="toast-close-icon"><CloseIcon /></div>
+      </button>
+    </button>
+  </div>
+
+  <div class="toast-item">
+    <div class="toast-bottom" bind:this={measureBottom}>
+      {#if showMidSeparator === 'always' || (showMidSeparator === 'when-no-category' && !category)}
+        <div class="mid-separator"></div>
+      {/if}
       <div class="toast-content">
         {#if Array.isArray(body)}
           {#each body as paragraph}
             <p>{paragraph}</p>
           {/each}
-        {:else if typeof body === 'string' || body instanceof String}
+        {:else if isString(body)}
           <p>{body}</p>
         {:else}
           <svelte:component this={body} />
         {/if}
+        {#if status && (isString(status) || isString(status.expanded))}
+          <p class="toast-status">{isString(status) ? status : status.expanded}</p>
+        {/if}
       </div>
-    {/if}
+    </div>
   </div>
-{/if}
+</div>
+
+<div
+  class="toast-item"
+  class:unrolling={state === 'unrolling' || state === 'unrolled'}
+  class:toast-item-in-focus={isHeaderFocused}
+  tabindex="-1"
+  role="alert"
+>
+  <div class="toast-top">
+    <div
+      class="toast-header-underlay"
+      class:resting={state === 'resting'}
+      class:preparing={state === 'preparing'}
+      class:unrolling={state === 'unrolling' || state === 'unrolled'}
+      class:toast-item-in-focus={isHeaderFocused}
+      on:transitionend={onEndTransition}
+    >
+      {#if taskProgress !== undefined}
+        <progress value={taskProgress} max={taskScale} />
+      {:else if !isExpanded && showExpiryCountdown && !isClicked && !!expiresIn}
+        {#if !Number.isNaN(expiresIn)}
+          <progress value={$expiryCountdown} />
+        {:else if Number.isNaN(expiresIn)}
+          <progress></progress>
+        {/if}
+      {/if}
+    </div>
+    <button
+      bind:this={headerButton}
+      class="toast-header"
+      class:resting-side={state === 'resting' || state === 'preparing'}
+      type="button"
+      style="height: {clipTitle && state !== 'unrolled'
+        ? topConstainedHeight
+        : topUnconstrainedHeight}px;"
+      on:mousedown={conditionallyDoNotTakeFocus}
+      on:click={onHeaderClicked}
+      on:focus={onHeaderFocus}
+      on:blur={onHeaderBlur}
+      on:keydown={onHeaderKeyDown}
+    >
+      <span class="toast-category-icon">
+        <svelte:component this={icon} {category} />
+      </span>
+      <div class="toast-text">
+        <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
+        <div
+          class:toast-flex-row={clipTitle &&
+            !isExpanded &&
+            status &&
+            (isString(status) || isString(status.collapsed)) &&
+            showStatusInline}
+        >
+          <p
+            class="toast-topic"
+            class:toast-constrain-text={clipTitle && (state === 'resting' || state === 'preparing')}
+          >
+            {topic}
+          </p>
+          {#if status && (isString(status) || isString(status.collapsed))}
+            <p
+              class="toast-status"
+              class:toast-no-margin={clipTitle &&
+                status &&
+                (isString(status) || isString(status.collapsed)) &&
+                showStatusInline}
+            >
+              {isString(status) ? status : status.collapsed}
+            </p>
+          {/if}
+        </div>
+      </div>
+      <button
+        class="toast-close-button"
+        type="button"
+        aria-label="Close"
+        on:mousedown={doNotTakeFocus}
+        on:click={onCloseClicked}
+      >
+        <div class="toast-close-icon"><CloseIcon /></div>
+      </button>
+    </button>
+  </div>
+  <div
+    style="height: {state === 'unrolled' ? bottomHeight : 0}px;"
+    class="toast-bottom"
+    class:not-unrolled={state !== 'unrolled'}
+    class:transition={ready}
+    on:transitionend={onEndTransition}
+  >
+    {#if showMidSeparator === 'always' || (showMidSeparator === 'when-no-category' && !category)}
+      <div class="mid-separator"></div>
+    {/if}
+    <div class="toast-content">
+      {#if Array.isArray(body)}
+        {#each body as paragraph}
+          <p>{paragraph}</p>
+        {/each}
+      {:else if isString(body)}
+        <p>{body}</p>
+      {:else}
+        <svelte:component this={body} />
+      {/if}
+      {#if status && (isString(status) || isString(status.expanded))}
+        <p class="toast-status">{isString(status) ? status : status.expanded}</p>
+      {/if}
+    </div>
+  </div>
+</div>
 
 <style>
-  .toast-category-icon {
-    font-size: var(--toast-icon-size);
-    line-height: 0;
-    color: var(--toast-icon-color);
-  }
-
-  .toast-close-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 1em;
-    height: 1em;
-  }
-
   .toast-item {
     display: flex;
     flex-direction: column;
-    pointer-events: all;
-    background-color: var(--toast-background-color);
-    box-shadow: 0.5em 0.5em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
-    margin: 1em;
     position: relative;
-    overflow: hidden;
+    border-radius: var(--toast-border-radius);
+    pointer-events: all;
     width: var(--toast-width);
     font-size: var(--toast-font-size);
+    color: var(--toast-text-color);
+  }
+
+  .toast-item.unrolling {
+    background-color: var(--toast-background-color);
+    overflow: hidden;
+  }
+
+  .toast-item.unrolling:not(.toast-item-in-focus) {
+    box-shadow: var(--toast-box-shadow);
+  }
+
+  .toast-item.unrolling.toast-item-in-focus {
+    box-shadow: var(--toast-in-focus-box-shadow);
+    outline: var(--toast-in-focus-outline);
+  }
+
+  .toast-top {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .toast-bottom {
+    overflow: hidden;
+    width: var(--toast-width);
+  }
+
+  .toast-bottom.not-unrolled {
+    height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .toast-bottom.transition {
+    transition:
+      transform 0.4s ease-in-out,
+      padding 0.4s ease-in-out,
+      height 0.4s ease-out;
+  }
+
+  .toast-header-underlay {
+    background-color: var(--toast-background-color);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     border-radius: var(--toast-border-radius);
+    overflow: hidden;
+    z-index: 0;
+    transition: var(--toast-underlay-transition);
   }
 
-  .toast-item-dashed.toast-item-in-focus {
-    outline: dashed 0.25em var(--toast-focus-color);
+  .toast-header-underlay.resting {
+    transform: var(--toast-underlay-contracted-transform);
   }
 
-  .toast-item-winged.toast-item-in-focus {
-    box-shadow:
-      -0.325em 0 var(--toast-focus-color),
-      0.325em 0 var(--toast-focus-color),
-      0.5em 0.5em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
+  .toast-header-underlay.preparing {
+    transform: var(--toast-underlay-expanded-transform);
   }
 
-  .toast-item-framed.toast-item-in-focus {
-    box-shadow:
-      -0.325em 0 0 0.1em var(--toast-focus-color),
-      0.325em 0 0 0.1em var(--toast-focus-color),
-      0.5em 0.5em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
+  .toast-header-underlay.unrolling {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .toast-header-underlay:not(.unrolling):not(.toast-item-in-focus) {
+    box-shadow: var(--toast-box-shadow);
+  }
+
+  .toast-header-underlay:not(.unrolling).toast-item-in-focus {
+    box-shadow: var(--toast-in-focus-box-shadow);
+    outline: var(--toast-in-focus-outline);
   }
 
   .toast-header {
@@ -268,12 +528,30 @@
     padding: var(--toast-header-padding);
     position: relative;
     align-items: baseline;
+    z-index: 1;
+    transition: height 0.4s ease-in;
+    overflow: hidden;
   }
 
   .toast-header:focus {
     outline: 0;
     box-shadow: none;
     border-radius: 0;
+  }
+
+  .toast-category-icon {
+    font-size: var(--toast-icon-size);
+    line-height: 0;
+    color: var(--toast-icon-color);
+    min-width: 1em;
+  }
+
+  .toast-close-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1em;
+    height: 1em;
   }
 
   .toast-close-button {
@@ -295,13 +573,15 @@
   }
 
   .toast-content {
-    padding: var(--toast-header-padding);
-    margin: 0 calc(var(--toast-icon-size) + var(--toast-icon-gap));
+    padding: var(--toast-header-padding)
+      calc(var(--toast-icon-size) + var(--toast-icon-gap) + var(--toast-header-padding));
+    background-color: var(--toast-content-background-color);
+    color: var(--toast-content-text-color);
   }
 
-  .toast-content-separator {
-    background-color: var(--toast-accent-color);
-    height: max(1px, 0.0625em);
+  .mid-separator {
+    height: var(--toast-mid-separator-thickness);
+    background-color: var(--toast-progress-color);
   }
 
   progress {
@@ -312,6 +592,11 @@
     -moz-appearance: none;
     height: 0.325em;
     border-radius: 0;
+    border: none;
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+    position: absolute;
+    bottom: 0;
   }
 
   progress:indeterminate {
@@ -324,6 +609,10 @@
   progress:not(:indeterminate) {
     background-color: var(--toast-background-color);
   }
+  progress[value]::-webkit-progress-bar {
+    background-color: transparent;
+    transition: none;
+  }
   progress[value]::-webkit-progress-value {
     background-color: var(--toast-progress-color);
     transition: none;
@@ -335,6 +624,33 @@
 
   .toast-text {
     flex-grow: 1;
+    min-width: 0;
+  }
+
+  .toast-constrain-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-wrap: nowrap;
+  }
+
+  .toast-topic {
+    flex: 1 1 auto;
+  }
+
+  .toast-status {
+    font-style: italic;
+    text-align: right;
+    text-wrap: pretty;
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  .toast-flex-row {
+    display: flex;
+  }
+
+  .toast-no-margin {
+    margin: 0;
   }
 
   div,
@@ -356,6 +672,10 @@
     font-size: 1em;
   }
 
+  p + p {
+    margin-top: 1em;
+  }
+
   button {
     border: none;
     padding: 0;
@@ -363,9 +683,5 @@
     background-color: inherit;
     font-size: inherit;
     text-align: inherit;
-  }
-
-  :global(p + p) {
-    margin-top: 1em;
   }
 </style>
