@@ -1,28 +1,28 @@
 <script lang="ts">
   import ToastList from './toast-list.svelte';
-	import type { ToastPosition } from './types.js';
+  import type { ToastPosition } from './types.js';
 
   export let margin = '2em';
 
   const zones = [
-    "top-left",
-    "top",
-    "top-right",
-    "left",
-    "center",
-    "right",
-    "bottom-left",
-    "bottom",
-    "bottom-right",
+    'top-left',
+    'top',
+    'top-right',
+    'left',
+    'center',
+    'right',
+    'bottom-left',
+    'bottom',
+    'bottom-right',
   ] as ToastPosition[];
 </script>
 
 <slot />
 <div class="toast-view" style="--toast-view-margin: {margin}">
   {#each zones as zone}
-  <div class={zone}>
-    <ToastList bind:zone />
-  </div>
+    <div class={zone}>
+      <ToastList bind:zone />
+    </div>
   {/each}
 </div>
 

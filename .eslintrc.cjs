@@ -5,37 +5,37 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2020,
-    extraFileExtensions: ['.svelte']
+    extraFileExtensions: ['.svelte'],
   },
   env: {
     browser: true,
     es2017: true,
-    node: true
+    node: true,
   },
   plugins: ['@typescript-eslint', 'prettier', 'import'],
-	extends: [
-		'eslint:recommended',
-		'plugin:@typescript-eslint/recommended',
-		'plugin:svelte/recommended',
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:svelte/recommended',
     'plugin:prettier/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
-	],
-	overrides: [
-		{
-			files: ['*.svelte'],
-			parser: 'svelte-eslint-parser',
-			parserOptions: {
-				parser: '@typescript-eslint/parser'
-			}
-		}
-	],
+  ],
+  overrides: [
+    {
+      files: ['*.svelte'],
+      parser: 'svelte-eslint-parser',
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+      },
+    },
+  ],
   rules: {
     'sort-imports': [
       'error',
       {
         ignoreCase: false,
-        ignoreDeclarationSort: true, // don"t want to sort import lines, use eslint-plugin-import instead
+        ignoreDeclarationSort: true, // Don't want to sort import lines? Use eslint-plugin-import instead.
         ignoreMemberSort: false,
         memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
         allowSeparatedGroups: true,
@@ -53,7 +53,7 @@ module.exports = {
           'index', // <- index imports
           'unknown', // <- unknown
         ],
-        'newlines-between': 'always',
+        'newlines-between': 'always-and-inside-groups',
         'alphabetize': {
           /* sort in ascending order. Options: ["ignore", "asc", "desc"] */
           order: 'asc',
@@ -62,6 +62,8 @@ module.exports = {
         },
       },
     ],
+    // Reenable once <https://github.com/import-js/eslint-plugin-import/issues/1479> is fixed.
+    'import/no-duplicates': 'off',
   },
   settings: {
     'import/resolver': {

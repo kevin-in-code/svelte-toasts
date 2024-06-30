@@ -1,10 +1,16 @@
 <script lang="ts">
-  import { onMount, type ComponentType, type SvelteComponent, createEventDispatcher, getContext } from 'svelte';
+  import {
+    onMount,
+    type ComponentType,
+    type SvelteComponent,
+    createEventDispatcher,
+    getContext,
+  } from 'svelte';
   import { resolveThemeInstance } from './themes.js';
   import { tweened } from 'svelte/motion';
   import CloseIcon from './icons/close-icon.svelte';
   import { TOAST_CONTEXT, type ToastContext } from './context.js';
-	import { linear } from 'svelte/easing';
+  import { linear } from 'svelte/easing';
 
   export let category: string | undefined;
 
@@ -19,15 +25,15 @@
   const theme = resolveThemeInstance($themeStore, category);
 
   const dispatch = createEventDispatcher<{
-    'focusin': void,
-    'focusout': void,
-    'click': void,
-    'expand': void,
-    'collapse': void,
-    'close': void,
-    'next': void,
-    'previous': void,
-    'move': void,
+    focusin: void;
+    focusout: void;
+    click: void;
+    expand: void;
+    collapse: void;
+    close: void;
+    next: void;
+    previous: void;
+    move: void;
   }>();
 
   let headerButton: HTMLButtonElement;
@@ -102,13 +108,13 @@
   function onHeaderKeyDown(e: KeyboardEvent) {
     if (!isHeaderFocused) return;
     switch (e.key) {
-      case "ArrowUp":
+      case 'ArrowUp':
         dispatch('previous');
         break;
-      case "ArrowDown":
+      case 'ArrowDown':
         dispatch('next');
         break;
-      case "Backspace":
+      case 'Backspace':
         dispatch('move');
         dispatch('close');
         break;
@@ -134,15 +140,15 @@
 </script>
 
 {#if !isClosed}
-<div
-  class="toast-item"
-  class:toast-item-dashed={theme.style.focus === 'dashed'}
-  class:toast-item-winged={theme.style.focus === 'winged'}
-  class:toast-item-framed={theme.style.focus === 'framed'}
-  class:toast-item-in-focus={isHeaderFocused}
-  tabindex="-1"
-  role="alert"
-  style="
+  <div
+    class="toast-item"
+    class:toast-item-dashed={theme.style.focus === 'dashed'}
+    class:toast-item-winged={theme.style.focus === 'winged'}
+    class:toast-item-framed={theme.style.focus === 'framed'}
+    class:toast-item-in-focus={isHeaderFocused}
+    tabindex="-1"
+    role="alert"
+    style="
     --toast-background-color: {theme.colors.background};
     --toast-text-color: {theme.colors.text};
     --toast-contrast-color: {theme.colors.contrast};
@@ -158,55 +164,55 @@
     --toast-border-radius: {theme.style.borderRadius ?? 0};
     color: {theme.colors.text};
   "
->
-  <button
-    bind:this={headerButton}
-    class="toast-header"
-    type="button"
-    on:click={onHeaderClicked}
-    on:focusin={onFocusIn}
-    on:focusout={onFocusOut}
-    on:focus={onHeaderFocus}
-    on:blur={onHeaderBlur}
-    on:keydown={onHeaderKeyDown}
   >
-    {#if theme.icon}
-      <span class="toast-category-icon"><svelte:component this={theme.icon} /></span>
-    {/if}
-    <div class="toast-text">
-      {#if theme.title}
-        <h3 class="toast-title">{theme.title}</h3>
+    <button
+      bind:this={headerButton}
+      class="toast-header"
+      type="button"
+      on:click={onHeaderClicked}
+      on:focusin={onFocusIn}
+      on:focusout={onFocusOut}
+      on:focus={onHeaderFocus}
+      on:blur={onHeaderBlur}
+      on:keydown={onHeaderKeyDown}
+    >
+      {#if theme.icon}
+        <span class="toast-category-icon"><svelte:component this={theme.icon} /></span>
       {/if}
-      <p class="toast-topic">{topic}</p>
-      {#if status}
-        <h3 class="toast-status">{status}</h3>
-      {/if}
-    </div>
-    <button class="toast-close-button" type="button" aria-label="Close" on:click={onCloseClicked}>
-      <div class="toast-close-icon"><CloseIcon /></div>
+      <div class="toast-text">
+        {#if theme.title}
+          <h3 class="toast-title">{theme.title}</h3>
+        {/if}
+        <p class="toast-topic">{topic}</p>
+        {#if status}
+          <h3 class="toast-status">{status}</h3>
+        {/if}
+      </div>
+      <button class="toast-close-button" type="button" aria-label="Close" on:click={onCloseClicked}>
+        <div class="toast-close-icon"><CloseIcon /></div>
+      </button>
     </button>
-  </button>
-  {#if isExpanded}
-    <div class="toast-content-separator" />
-  {:else if !isClicked && !!duration && !Number.isNaN(duration)}
-    <progress value={$progress} />
-  {:else if !isClicked && (Number.isNaN(duration) || duration === null)}
-    <progress></progress>
-  {/if}
-  {#if isExpanded && contentExists(body)}
-    <div class="toast-content">
-      {#if Array.isArray(body)}
-        {#each body as paragraph}
-          <p>{paragraph}</p>
-        {/each}
-      {:else if typeof body === 'string' || body instanceof String}
-        <p>{body}</p>
-      {:else}
-        <svelte:component this={body} />
-      {/if}
-    </div>
-  {/if}
-</div>
+    {#if isExpanded}
+      <div class="toast-content-separator" />
+    {:else if !isClicked && !!duration && !Number.isNaN(duration)}
+      <progress value={$progress} />
+    {:else if !isClicked && (Number.isNaN(duration) || duration === null)}
+      <progress></progress>
+    {/if}
+    {#if isExpanded && contentExists(body)}
+      <div class="toast-content">
+        {#if Array.isArray(body)}
+          {#each body as paragraph}
+            <p>{paragraph}</p>
+          {/each}
+        {:else if typeof body === 'string' || body instanceof String}
+          <p>{body}</p>
+        {:else}
+          <svelte:component this={body} />
+        {/if}
+      </div>
+    {/if}
+  </div>
 {/if}
 
 <style>
@@ -243,11 +249,17 @@
   }
 
   .toast-item-winged.toast-item-in-focus {
-    box-shadow: -0.325em 0 var(--toast-focus-color), 0.325em 0 var(--toast-focus-color), 0.5em 0.5em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
+    box-shadow:
+      -0.325em 0 var(--toast-focus-color),
+      0.325em 0 var(--toast-focus-color),
+      0.5em 0.5em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
   }
 
   .toast-item-framed.toast-item-in-focus {
-    box-shadow: -0.325em 0 0 0.1em var(--toast-focus-color), 0.325em 0 0 0.1em var(--toast-focus-color), 0.5em 0.5em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
+    box-shadow:
+      -0.325em 0 0 0.1em var(--toast-focus-color),
+      0.325em 0 0 0.1em var(--toast-focus-color),
+      0.5em 0.5em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
   }
 
   .toast-header {

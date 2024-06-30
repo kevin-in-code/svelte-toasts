@@ -1,15 +1,15 @@
 import type { ComponentType } from 'svelte';
 
 export type ToastPosition =
-	| 'top-left'
-	| 'top'
-	| 'top-right'
-	| 'left'
-	| 'center'
-	| 'right'
-	| 'bottom-left'
-	| 'bottom'
-	| 'bottom-right';
+  | 'top-left'
+  | 'top'
+  | 'top-right'
+  | 'left'
+  | 'center'
+  | 'right'
+  | 'bottom-left'
+  | 'bottom'
+  | 'bottom-right';
 
 export interface ToastThemeColors {
   accent: string;
@@ -19,11 +19,11 @@ export interface ToastThemeColors {
   focus: string;
   icon: string;
   progress: string;
-};
+}
 
 export interface ToastCategoryTheme {
   title?: string;
-  colors: { accent: string; } & Partial<ToastThemeColors>;
+  colors: { accent: string } & Partial<ToastThemeColors>;
 }
 
 export interface ToastThemeStyle {
@@ -38,14 +38,14 @@ export interface ToastTheme {
   titles?: Record<string, string>;
   colors?: Record<string, Partial<ToastThemeColors>>;
   style?: ToastThemeStyle;
-};
+}
 
 export interface ToastThemeInstance {
   icon?: ComponentType;
   title?: string;
   colors: ToastThemeColors;
   style: ToastThemeStyle;
-};
+}
 
 export interface ToastItem {
   id: number;
@@ -54,12 +54,12 @@ export interface ToastItem {
   category?: string;
   topic: string;
   status?: string;
-	body?: string | string[] | ComponentType;
+  body?: string | string[] | ComponentType;
 
   duration?: number | null;
 
   onClick?: () => void;
-	onExpand?: () => void;
-	onCollapse?: () => void;
-	onClose?: () => void;
+  onExpand?: () => void;
+  onCollapse?: () => void;
+  onClose?: () => void;
 }

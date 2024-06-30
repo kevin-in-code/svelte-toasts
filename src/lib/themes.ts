@@ -2,7 +2,12 @@ import ErrorIcon from './icons/error-icon.svelte';
 import InformationIcon from './icons/information-icon.svelte';
 import SuccessIcon from './icons/success-icon.svelte';
 import WarningIcon from './icons/warning-icon.svelte';
-import { type ToastThemeColors, type ToastTheme, type ToastThemeStyle, type ToastThemeInstance } from './types.js';
+import {
+  type ToastThemeColors,
+  type ToastTheme,
+  type ToastThemeStyle,
+  type ToastThemeInstance,
+} from './types.js';
 
 const commonTitles = {
   success: 'Success',
@@ -21,7 +26,7 @@ const commonIcons = {
 const commonStyles = {
   width: '22em',
   fontSize: '87.5%',
-}
+};
 
 const marker: ToastTheme = {
   titles: { ...commonTitles },
@@ -54,7 +59,7 @@ const crisp: ToastTheme = {
       accent: '#3399ff',
       background: '#393939',
       text: '#dcdcdc',
-      contrast: '#393939'
+      contrast: '#393939',
     },
     success: { accent: '#16a34a' },
     information: { accent: '#0284c7' },
@@ -107,18 +112,32 @@ const defaultStyles: ToastThemeStyle = {
 function resolveThemeInstance(theme: ToastTheme, category?: string): ToastThemeInstance {
   const d = 'default';
   category ??= d;
-  const accent = theme.colors?.[category]?.accent ?? theme.colors?.[d]?.accent ?? defaultColors.accent;
+  const accent =
+    theme.colors?.[category]?.accent ?? theme.colors?.[d]?.accent ?? defaultColors.accent;
   return {
     title: theme.titles?.[category] ?? category,
     icon: theme.icons?.[category],
     colors: {
       accent,
-      background: theme.colors?.[category]?.background ?? theme.colors?.[d]?.background ?? defaultColors.background,
+      background:
+        theme.colors?.[category]?.background ??
+        theme.colors?.[d]?.background ??
+        defaultColors.background,
       text: theme.colors?.[category]?.text ?? theme.colors?.[d]?.text ?? defaultColors.text,
-      contrast: theme.colors?.[category]?.contrast ?? theme.colors?.[d]?.contrast ?? defaultColors.contrast,
-      focus: theme.colors?.[category]?.focus ?? theme.colors?.[d]?.focus ?? accent ?? defaultColors.focus,
-      icon: theme.colors?.[category]?.icon ?? accent ?? theme.colors?.[d]?.icon ?? defaultColors.icon,
-      progress: theme.colors?.[category]?.progress ?? accent ?? theme.colors?.[d]?.progress ?? defaultColors.progress,
+      contrast:
+        theme.colors?.[category]?.contrast ?? theme.colors?.[d]?.contrast ?? defaultColors.contrast,
+      focus:
+        theme.colors?.[category]?.focus ??
+        theme.colors?.[d]?.focus ??
+        accent ??
+        defaultColors.focus,
+      icon:
+        theme.colors?.[category]?.icon ?? accent ?? theme.colors?.[d]?.icon ?? defaultColors.icon,
+      progress:
+        theme.colors?.[category]?.progress ??
+        accent ??
+        theme.colors?.[d]?.progress ??
+        defaultColors.progress,
     },
     style: { ...defaultStyles, ...(theme.style ?? {}) },
   };
