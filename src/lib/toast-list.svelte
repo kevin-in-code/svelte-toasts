@@ -1,74 +1,107 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import { TOAST_CONTEXT, type ToastContext } from './context.js';
-  import type { ToastPosition, ToastItem } from './types.js';
-  import Toast from './toast.svelte';
+  import { flip } from 'svelte/animate';
+  import { cubicInOut, quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
 
-  export let zone: ToastPosition;
+  import { activeToasts } from './context.js';
+  import ThemedToast from './themed-toast.svelte';
+  import type { ToastCollection, ToastTheme, ToastTransitionName } from './types.js';
 
-  const context = getContext<ToastContext>(TOAST_CONTEXT);
-  const list = context.queues[zone];
+  export let enter: ToastTransitionName;
+  export let exit: ToastTransitionName;
+  export let theme: ToastTheme;
 
-  interface Item {
-    ref?: Toast;
-    entry: ToastItem;
-  }
+  export let clickTakesFocus: boolean;
 
-  let items: Item[] = [];
-
-  function updateItems(currentList: ToastItem[]) {
-    const newItems = [];
-    for (let entry of currentList) {
-      const existingItem = items.find((i) => i.entry.id === entry.id);
-      newItems.push({
-        entry,
-        ref: existingItem?.ref,
-      });
+  function entryTransition(node: Element, params?: { enter: ToastTransitionName }) {
+    switch (params?.enter ?? 'fade') {
+      case 'left':
+        return fly(node, { delay: 2, duration: 500, x: -300, easing: cubicInOut });
+      case 'right':
+        return fly(node, { delay: 2, duration: 500, x: +300, easing: cubicInOut });
+      case 'top':
+        return fly(node, { delay: 2, duration: 500, y: -300, easing: cubicInOut });
+      case 'bottom':
+        return fly(node, { delay: 2, duration: 500, y: +300, easing: cubicInOut });
+      case 'fade':
+        return fade(node, { delay: 2, duration: 500, easing: cubicInOut });
     }
-    items = newItems;
   }
 
-  $: updateItems($list);
+  function exitTransition(node: Element, params?: { exit: ToastTransitionName }) {
+    switch (params?.exit ?? 'fade') {
+      case 'left':
+        return fly(node, { delay: 1, duration: 500, x: -300, easing: cubicInOut });
+      case 'right':
+        return fly(node, { delay: 1, duration: 500, x: +300, easing: cubicInOut });
+      case 'top':
+        return fly(node, { delay: 1, duration: 500, y: -300, easing: cubicInOut });
+      case 'bottom':
+        return fly(node, { delay: 1, duration: 500, y: +300, easing: cubicInOut });
+      case 'fade':
+        return fade(node, { delay: 1, duration: 500, easing: cubicInOut });
+    }
+  }
+
+  function positiveOrUndefined(value: number) {
+    if (value > 0) {
+      return value;
+    } else {
+      return undefined;
+    }
+  }
+
+  let items: ToastCollection;
+
+  $: items = $activeToasts;
 </script>
 
-<ul>
-  {#each items as item, index (item.entry.id)}
-    <li>
-      <Toast
-        bind:this={item.ref}
-        category={item.entry.category}
-        topic={item.entry.topic}
-        status={item.entry.status}
-        body={item.entry.body}
-        duration={item.entry.duration}
-        on:click={item.entry.onClick}
-        on:expand={item.entry.onExpand}
-        on:collapse={item.entry.onCollapse}
-        on:close={item.entry.onClose}
-        on:previous={() => {
-          index - 1 >= 0 && items[index - 1]?.ref?.focus?.();
+{#key items.id}
+  <div class="list">
+    {#each items.list as item (item.id)}
+      <div
+        class="toast"
+        in:entryTransition={{ enter }}
+        out:exitTransition={{ exit }}
+        animate:flip={{
+          delay: 0,
+          duration: 1000,
+          easing: quintOut,
         }}
-        on:next={() => {
-          index + 1 < items.length && items[index + 1]?.ref?.focus?.();
-        }}
-        on:move={() => {
-          index + 1 < items.length
-            ? items[index + 1]?.ref?.focus?.()
-            : items[index - 1]?.ref?.focus?.();
-        }}
-      />
-    </li>
-  {/each}
-</ul>
+      >
+        <ThemedToast
+          {theme}
+          {clickTakesFocus}
+          category={item.category ?? ''}
+          topic={item.topic}
+          status={item.status}
+          body={item.body ?? ''}
+          isExpanded={item.isExpanded ?? false}
+          showStatusInline={item.showStatusInlineWhenCollapsed ?? false}
+          showExpiryCountdown={item.showExpiryCountdown ?? false}
+          expiresIn={item.expiresAt
+            ? positiveOrUndefined(item.expiresAt.getTime() - Date.now())
+            : undefined}
+          taskProgress={item.taskProgress}
+          taskScale={item.taskScale ?? 1}
+          on:click={item.onClick}
+          on:expand={item.onExpand}
+          on:collapse={item.onCollapse}
+          on:close={item.onClose}
+          on:cancelFocus={item.cancelFocus}
+          on:previous={item.transferFocusBackward}
+          on:next={item.transferFocusForward}
+          on:focusable={(event) => item.update({ focusableElement: event.detail })}
+        />
+      </div>
+    {/each}
+  </div>
+{/key}
 
 <style>
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  ul li {
-    list-style: none;
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
   }
 </style>
