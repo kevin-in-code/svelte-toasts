@@ -2,6 +2,7 @@
   "name": "svelte-toasts",
   "version": "0.0.1",
   "scripts": {
+    "demo": "http-server -o demo",
     "dev": "vite dev",
     "build": "vite build && npm run package",
     "preview": "vite preview",

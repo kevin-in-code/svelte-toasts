@@ -1,5 +1,6 @@
 build
 coverage
+demo
 dist
 demo
 *.min.*
