@@ -1,91 +1,88 @@
 <script lang="ts">
+  import { marker } from './themes.js';
   import ToastList from './toast-list.svelte';
-  import type { ToastPosition } from './types.js';
+  import type { ToastTheme, ToastTransitionName, ToastViewZone } from './types.js';
 
   export let margin = '2em';
-
-  const zones = [
-    'top-left',
-    'top',
-    'top-right',
-    'left',
-    'center',
-    'right',
-    'bottom-left',
-    'bottom',
-    'bottom-right',
-  ] as ToastPosition[];
+  export let zone: ToastViewZone = 'top-right';
+  export let enter: ToastTransitionName = 'fade';
+  export let exit: ToastTransitionName = 'top';
+  export let theme: ToastTheme = marker;
+  export let clickTakesFocus: boolean = false;
 </script>
 
 <slot />
 <div class="toast-view" style="--toast-view-margin: {margin}">
-  {#each zones as zone}
-    <div class={zone}>
-      <ToastList bind:zone />
-    </div>
-  {/each}
+  <div class={zone}>
+    <ToastList {theme} {enter} {exit} {clickTakesFocus} />
+  </div>
 </div>
 
 <style>
   div.toast-view {
-    position: relative;
-    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    overflow: hidden;
   }
 
   div {
     position: absolute;
-    margin: var(--toast-view-margin);
     box-sizing: border-box;
     z-index: 1000;
   }
 
   .top-left {
-    left: 0;
-    top: 0;
+    left: var(--toast-view-margin);
+    top: var(--toast-view-margin);
   }
 
   .top {
-    left: calc(50% - var(--toast-view-margin));
-    top: 0;
+    left: 50%;
+    top: var(--toast-view-margin);
     transform: translate(-50%, 0);
   }
 
   .top-right {
-    right: 0;
-    top: 0;
+    right: var(--toast-view-margin);
+    top: var(--toast-view-margin);
   }
 
   .left {
-    left: 0;
-    top: calc(50% - var(--toast-view-margin));
+    left: var(--toast-view-margin);
+    top: 50%;
     transform: translate(0, -50%);
   }
 
   .center {
-    left: calc(50% - var(--toast-view-margin));
-    top: calc(50% - var(--toast-view-margin));
+    left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
   }
 
   .right {
-    right: 0;
-    top: calc(50% - var(--toast-view-margin));
+    right: var(--toast-view-margin);
+    top: 50%;
     transform: translate(0, -50%);
   }
 
   .bottom-left {
-    left: 0;
-    bottom: 0;
+    left: var(--toast-view-margin);
+    bottom: var(--toast-view-margin);
   }
 
   .bottom {
-    left: calc(50% - var(--toast-view-margin));
-    bottom: 0;
+    left: 50%;
+    bottom: var(--toast-view-margin);
     transform: translate(-50%, 0);
   }
 
   .bottom-right {
-    right: 0;
-    bottom: 0;
+    right: var(--toast-view-margin);
+    bottom: var(--toast-view-margin);
   }
 </style>
