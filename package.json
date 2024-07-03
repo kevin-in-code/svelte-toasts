@@ -2,9 +2,9 @@
   "name": "svelte-toasts",
   "version": "0.0.1",
   "scripts": {
-    "demo": "http-server -o demo",
+    "demo": "vite build && http-server -o demo",
     "dev": "vite dev",
-    "build": "vite build && npm run package",
+    "build": "npm run package",
     "preview": "vite preview",
     "package": "svelte-kit sync && svelte-package && publint",
     "prepublishOnly": "npm run package",
