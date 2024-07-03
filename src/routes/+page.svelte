@@ -5,7 +5,7 @@
 
   import SaveNow from './save-now.svelte';
 
-  let theme = marker;
+  let theme = action;
   let mode: 'light' | 'dark' = 'light';
   let numberOfToastsRaised = 0;
   let abortDemo: AbortController | undefined;
