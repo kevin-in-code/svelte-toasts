@@ -5,7 +5,11 @@
 
   import { activeToasts } from './context.js';
   import ThemedToast from './themed-toast.svelte';
-  import type { ToastCollection, ToastTheme, ToastTransitionName } from './types.js';
+  import type { ToastCollection, ToastDesignComponent, ToastIconComponent, ToastTheme, ToastTitleComponent, ToastTransitionName } from './types.js';
+
+  export let design: ToastDesignComponent;
+  export let title: ToastTitleComponent;
+  export let icon: ToastIconComponent;
 
   export let enter: ToastTransitionName;
   export let exit: ToastTransitionName;
@@ -71,6 +75,9 @@
       >
         <ThemedToast
           {theme}
+          {design}
+          {title}
+          {icon}
           {clickTakesFocus}
           category={item.category ?? ''}
           topic={item.topic}
