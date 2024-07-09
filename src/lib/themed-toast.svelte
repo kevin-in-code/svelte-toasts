@@ -12,9 +12,9 @@
 
   export let theme: ToastTheme;
 
-  export let design: ToastDesignComponent | undefined = undefined;
-  export let title: ToastTitleComponent | undefined = undefined;
-  export let icon: ToastIconComponent | undefined = undefined;
+  export let design: ToastDesignComponent;
+  export let title: ToastTitleComponent;
+  export let icon: ToastIconComponent;
 
   export let clickTakesFocus: boolean;
   export let category: string;
@@ -34,9 +34,9 @@
 
 <ConfigureToastTheme {theme} {category}>
   <svelte:component
-    this={design ?? theme.component.design}
-    title={title ?? theme.component.title}
-    icon={icon ?? theme.component.icon}
+    this={design}
+    title={title}
+    icon={icon}
     {clickTakesFocus}
     {category}
     {topic}

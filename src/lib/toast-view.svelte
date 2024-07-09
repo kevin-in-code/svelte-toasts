@@ -1,7 +1,14 @@
 <script lang="ts">
+  import DefaultIcon from './default-icon.svelte';
+  import DefaultTitle from './default-title.svelte';
+  import DashedToast from './designs/timeless-toast.svelte';
   import { marker } from './themes.js';
   import ToastList from './toast-list.svelte';
-  import type { ToastTheme, ToastTransitionName, ToastViewZone } from './types.js';
+  import type { ToastDesignComponent, ToastIconComponent, ToastTheme, ToastTitleComponent, ToastTransitionName, ToastViewZone } from './types.js';
+
+  export let design: ToastDesignComponent | undefined = undefined;
+  export let title: ToastTitleComponent | undefined = undefined;
+  export let icon: ToastIconComponent | undefined = undefined;
 
   export let margin = '2em';
   export let zone: ToastViewZone = 'top-right';
@@ -14,7 +21,15 @@
 <slot />
 <div class="toast-view" style="--toast-view-margin: {margin}">
   <div class={zone}>
-    <ToastList {theme} {enter} {exit} {clickTakesFocus} />
+    <ToastList
+      {theme}
+      design={design ?? DashedToast}
+      title={title ?? DefaultTitle}
+      icon={icon ?? DefaultIcon}
+      {enter}
+      {exit}
+      {clickTakesFocus}
+    />
   </div>
 </div>
 

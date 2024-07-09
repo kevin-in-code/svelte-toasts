@@ -8,11 +8,6 @@ import { type ToastTheme } from './types.js';
 
 const action: ToastTheme = {
   name: 'action',
-  component: {
-    icon: DefaultIcon,
-    title: DefaultTitle,
-    design: SkewedToast,
-  },
   colors: {
     default: {
       accent: '#3399ff',
@@ -32,11 +27,6 @@ const action: ToastTheme = {
 
 const candy: ToastTheme = {
   name: 'candy',
-  component: {
-    icon: DefaultIcon,
-    title: DefaultTitle,
-    design: FramedToast,
-  },
   colors: {
     default: {
       accent: '#3399ff',
@@ -55,11 +45,6 @@ const candy: ToastTheme = {
 
 const crisp: ToastTheme = {
   name: 'crisp',
-  component: {
-    icon: DefaultIcon,
-    title: DefaultTitle,
-    design: WingedToast,
-  },
   colors: {
     default: {
       accent: '#0284c7',
@@ -78,11 +63,6 @@ const crisp: ToastTheme = {
 
 const marker: ToastTheme = {
   name: 'marker',
-  component: {
-    icon: DefaultIcon,
-    title: DefaultTitle,
-    design: DashedToast,
-  },
   colors: {
     default: {
       accent: '#3388cc',

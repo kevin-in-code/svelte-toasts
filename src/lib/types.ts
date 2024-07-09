@@ -27,11 +27,6 @@ export interface ToastThemeColors {
 
 export interface ToastTheme {
   name: string;
-  component: {
-    icon: ToastIconComponent;
-    title: ToastTitleComponent;
-    design: ToastDesignComponent;
-  };
   colors?: Record<string, Partial<ToastThemeColors>>;
 }
 
