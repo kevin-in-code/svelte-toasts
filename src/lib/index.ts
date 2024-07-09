@@ -1,10 +1,9 @@
 import DefaultIcon from '$lib/default-icon.svelte';
 import DefaultTitle from '$lib/default-title.svelte';
 
-import DashedToast from '$lib/designs/dashed-toast.svelte';
-import FramedToast from '$lib/designs/framed-toast.svelte';
-import SkewedToast from '$lib/designs/skewed-toast.svelte';
-import WingedToast from '$lib/designs/winged-toast.svelte';
+import ClassicToast from '$lib/designs/classic-toast.svelte';
+import ActionToast from '$lib/designs/action-toast.svelte';
+import FormalToast from '$lib/designs/formal-toast.svelte';
 
 import CloseIcon from '$lib/icons/close-icon.svelte';
 import ErrorIcon from '$lib/icons/error-icon.svelte';
@@ -19,15 +18,14 @@ export * from '$lib/themes.js';
 
 export {
   CloseIcon,
-  DashedToast,
+  ClassicToast,
   DefaultIcon,
   DefaultTitle,
   ErrorIcon,
-  FramedToast,
   InformationIcon,
-  SkewedToast,
+  ActionToast,
   SuccessIcon,
   ToastView,
   WarningIcon,
-  WingedToast,
+  FormalToast,
 };

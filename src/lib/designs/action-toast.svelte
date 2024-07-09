@@ -31,12 +31,12 @@
     --toast-header-padding: 0.75em;
     --toast-icon-gap: 0.75em;
     --toast-icon-size: 1.5em;
-    --toast-in-focus-box-shadow: -0.325em 0 0 0.1em var(--toast-focus-color), 0.325em 0 0 0.1em var(--toast-focus-color), 0.5em 0.7em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
-    --toast-in-focus-outline: none;
-    --toast-mid-separator-thickness: 0.325em;
-    --toast-underlay-contracted-transform: none;
-    --toast-underlay-expanded-transform: none;
-    --toast-underlay-transition: none;
+    --toast-in-focus-box-shadow: 0.5em 0.7em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
+    --toast-in-focus-outline: dashed 2px var(--toast-focus-color);
+    --toast-mid-separator-thickness: 1px;
+    --toast-underlay-contracted-transform: skew(-15deg);
+    --toast-underlay-expanded-transform: skew(0);
+    --toast-underlay-transition: transform 0.2s linear;
     --toast-width: 22em;
   "
 >
@@ -54,6 +54,9 @@
     {taskProgress}
     {taskScale}
     {isExpanded}
+    clipTitle={true}
+    hasMultistageExpansion={true}
+    showMidSeparator="always"
     on:click
     on:expand
     on:collapse

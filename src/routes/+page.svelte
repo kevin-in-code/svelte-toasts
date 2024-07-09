@@ -1,11 +1,26 @@
 <script lang="ts">
   import { tick } from 'svelte';
 
-  import { ToastView, action, candy, clearToasts, crisp, marker, raiseToast } from '$lib/index.js';
+  import {
+    ToastView,
+    activeToasts,
+    candy,
+    chalk,
+    clearToasts,
+    crisp,
+    marker,
+    raiseToast,
+  } from '$lib/index.js';
 
   import SaveNow from './save-now.svelte';
+  import { get } from 'svelte/store';
+  import ClassicToast from '$lib/designs/classic-toast.svelte';
+  import ActionToast from '$lib/designs/action-toast.svelte';
+  import FormalToast from '$lib/designs/formal-toast.svelte';
 
-  let theme = action;
+  let theme = marker;
+  let design = ClassicToast;
+  let clickTakesFocus = false;
   let mode: 'light' | 'dark' = 'light';
   let numberOfToastsRaised = 0;
   let abortDemo: AbortController | undefined;
@@ -142,18 +157,41 @@
     }
   }
 
-  setTimeout(post, 0);
+  function postInitialToast() {
+    if (get(activeToasts).list.length === 0) {
+      post();
+    }
+  }
+
+  setTimeout(postInitialToast, 0);
 </script>
 
-<ToastView {theme} zone="top" />
+<ToastView {theme} {design} {clickTakesFocus} zone="top" />
 <div class="panel" class:dark={mode === 'dark'}>
   <div></div>
   <div class="controls">
-    <div role="group" class="row">
-      <button class:outline={theme !== action} on:click={() => (theme = action)}>action</button>
-      <button class:outline={theme !== marker} on:click={() => (theme = marker)}>marker</button>
+    <div class="row gap">
+      <label class="primary-color">
+        <input type="checkbox" bind:checked={clickTakesFocus} />
+        Click takes focus
+      </label>
+    </div>
+    <div role="group" class="row break">
       <button class:outline={theme !== candy} on:click={() => (theme = candy)}>candy</button>
       <button class:outline={theme !== crisp} on:click={() => (theme = crisp)}>crisp</button>
+      <button class:outline={theme !== chalk} on:click={() => (theme = chalk)}>chalk</button>
+      <button class:outline={theme !== marker} on:click={() => (theme = marker)}>marker</button>
+    </div>
+    <div role="group" class="row">
+      <button class:outline={design !== ClassicToast} on:click={() => (design = ClassicToast)}
+        >classic</button
+      >
+      <button class:outline={design !== FormalToast} on:click={() => (design = FormalToast)}
+        >formal</button
+      >
+      <button class:outline={design !== ActionToast} on:click={() => (design = ActionToast)}
+        >action</button
+      >
     </div>
     <div role="group" class="row">
       <button class:outline={mode !== 'light'} on:click={() => (mode = 'light')}
@@ -201,6 +239,10 @@
     margin-bottom: 0;
   }
 
+  .break {
+    flex-basis: 100%;
+  }
+
   .dark {
     background-color: rgb(36, 60, 66);
   }
@@ -216,6 +258,10 @@
 
   .gap {
     gap: 1em;
+  }
+
+  .primary-color {
+    --pico-color: var(--pico-primary);
   }
 
   button {
