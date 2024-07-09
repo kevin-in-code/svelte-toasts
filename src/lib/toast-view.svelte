@@ -1,10 +1,17 @@
 <script lang="ts">
   import DefaultIcon from './default-icon.svelte';
   import DefaultTitle from './default-title.svelte';
-  import DashedToast from './designs/timeless-toast.svelte';
+  import DashedToast from './designs/classic-toast.svelte';
   import { marker } from './themes.js';
   import ToastList from './toast-list.svelte';
-  import type { ToastDesignComponent, ToastIconComponent, ToastTheme, ToastTitleComponent, ToastTransitionName, ToastViewZone } from './types.js';
+  import type {
+    ToastDesignComponent,
+    ToastIconComponent,
+    ToastTheme,
+    ToastTitleComponent,
+    ToastTransitionName,
+    ToastViewZone,
+  } from './types.js';
 
   export let design: ToastDesignComponent | undefined = undefined;
   export let title: ToastTitleComponent | undefined = undefined;

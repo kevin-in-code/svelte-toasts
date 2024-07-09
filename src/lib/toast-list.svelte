@@ -5,7 +5,14 @@
 
   import { activeToasts } from './context.js';
   import ThemedToast from './themed-toast.svelte';
-  import type { ToastCollection, ToastDesignComponent, ToastIconComponent, ToastTheme, ToastTitleComponent, ToastTransitionName } from './types.js';
+  import type {
+    ToastCollection,
+    ToastDesignComponent,
+    ToastIconComponent,
+    ToastTheme,
+    ToastTitleComponent,
+    ToastTransitionName,
+  } from './types.js';
 
   export let design: ToastDesignComponent;
   export let title: ToastTitleComponent;

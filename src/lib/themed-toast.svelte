@@ -35,8 +35,8 @@
 <ConfigureToastTheme {theme} {category}>
   <svelte:component
     this={design}
-    title={title}
-    icon={icon}
+    {title}
+    {icon}
     {clickTakesFocus}
     {category}
     {topic}
