@@ -241,72 +241,199 @@
 
 <div style="position: absolute; left: 0; top: 0; visibility: hidden;">
   <div class="toast-item" bind:this={measureTopConstrained}>
-    <button class="toast-header resting-side" type="button">
-      <span class="toast-category-icon">
-        <svelte:component this={icon} {category} />
-      </span>
-      <div class="toast-text">
-        <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
-        <div
-          class:toast-flex-row={clipTitle &&
-            status &&
-            (isString(status) || isString(status.collapsed)) &&
-            showStatusInline}
-        >
-          <p class="toast-topic" class:toast-constrain-text={clipTitle}>
-            {topic}
-          </p>
-          {#if status && (isString(status) || isString(status.collapsed))}
-            <p
-              class="toast-status"
-              class:toast-no-margin={clipTitle &&
+    <div class="toast-column">
+      <div class="toast-top">
+        <button class="toast-header resting-side" type="button">
+          <span class="toast-category-icon">
+            <svelte:component this={icon} {category} />
+          </span>
+          <div class="toast-text">
+            <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
+            <div
+              class:toast-flex-row={clipTitle &&
                 status &&
                 (isString(status) || isString(status.collapsed)) &&
                 showStatusInline}
             >
-              {isString(status) ? status : status.collapsed}
-            </p>
-          {/if}
-        </div>
+              <p class="toast-topic" class:toast-constrain-text={clipTitle}>
+                {topic}
+              </p>
+              {#if status && (isString(status) || isString(status.collapsed))}
+                <p
+                  class="toast-status"
+                  class:toast-no-margin={clipTitle &&
+                    status &&
+                    (isString(status) || isString(status.collapsed)) &&
+                    showStatusInline}
+                >
+                  {isString(status) ? status : status.collapsed}
+                </p>
+              {/if}
+            </div>
+          </div>
+          <button class="toast-close-button" type="button" aria-label="Close">
+            <div class="toast-close-icon"><CloseIcon /></div>
+          </button>
+        </button>
       </div>
-      <button class="toast-close-button" type="button" aria-label="Close">
-        <div class="toast-close-icon"><CloseIcon /></div>
-      </button>
-    </button>
+    </div>
   </div>
 
   <div class="toast-item" bind:this={measureTopUnconstrained}>
-    <button class="toast-header resting-side" type="button">
-      <span class="toast-category-icon">
-        <svelte:component this={icon} {category} />
-      </span>
-      <div class="toast-text">
-        <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
-        <div>
-          <p class="toast-topic">
-            {topic}
-          </p>
-          {#if status && (isString(status) || isString(status.collapsed))}
-            <p
-              class="toast-status"
-              class:toast-no-margin={clipTitle &&
-                status &&
-                (isString(status) || isString(status.collapsed)) &&
-                showStatusInline}
-            >
-              {isString(status) ? status : status.collapsed}
-            </p>
-          {/if}
-        </div>
+    <div class="toast-column">
+      <div class="toast-top">
+        <button class="toast-header resting-side" type="button">
+          <span class="toast-category-icon">
+            <svelte:component this={icon} {category} />
+          </span>
+          <div class="toast-text">
+            <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
+            <div>
+              <p class="toast-topic">
+                {topic}
+              </p>
+              {#if status && (isString(status) || isString(status.collapsed))}
+                <p
+                  class="toast-status"
+                  class:toast-no-margin={clipTitle &&
+                    status &&
+                    (isString(status) || isString(status.collapsed)) &&
+                    showStatusInline}
+                >
+                  {isString(status) ? status : status.collapsed}
+                </p>
+              {/if}
+            </div>
+          </div>
+          <button class="toast-close-button" type="button" aria-label="Close">
+            <div class="toast-close-icon"><CloseIcon /></div>
+          </button>
+        </button>
       </div>
-      <button class="toast-close-button" type="button" aria-label="Close">
-        <div class="toast-close-icon"><CloseIcon /></div>
-      </button>
-    </button>
+    </div>
   </div>
 
   <div class="toast-item">
-    <div class="toast-bottom" bind:this={measureBottom}>
+    <div class="toast-column">
+      <div class="toast-bottom" bind:this={measureBottom}>
+        {#if showMidSeparator === 'always' || (showMidSeparator === 'when-no-category' && !category)}
+          <div class="mid-separator"></div>
+        {/if}
+        <div class="toast-content">
+          {#if Array.isArray(body)}
+            {#each body as paragraph}
+              <p>{paragraph}</p>
+            {/each}
+          {:else if isString(body)}
+            <p>{body}</p>
+          {:else}
+            <svelte:component this={body} />
+          {/if}
+          {#if status && (isString(status) || isString(status.expanded))}
+            <p class="toast-status">{isString(status) ? status : status.expanded}</p>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="toast-item"
+  class:unrolling={state === 'unrolling' || state === 'unrolled'}
+  class:toast-item-in-focus={isHeaderFocused}
+  tabindex="-1"
+  role="alert"
+>
+  <div class="toast-column">
+    <div class="toast-top">
+      <div
+        class="toast-header-underlay"
+        class:resting={state === 'resting'}
+        class:preparing={state === 'preparing'}
+        class:unrolling={state === 'unrolling' || state === 'unrolled'}
+        class:toast-item-in-focus={isHeaderFocused}
+        on:transitionend={onEndTransition}
+      >
+        <div class="toast-left-edge"></div>
+        <div class="toast-column">
+        {#if taskProgress !== undefined}
+          {#if taskProgress !== taskScale}
+            <progress value={taskProgress} max={taskScale} />
+          {/if}
+        {:else if !isExpanded && showExpiryCountdown && !isClicked && !!expiresIn}
+          {#if !Number.isNaN(expiresIn)}
+            <progress value={$expiryCountdown} />
+          {:else if Number.isNaN(expiresIn)}
+            <progress></progress>
+          {/if}
+        {/if}
+        </div>
+        <div class="toast-right-edge"></div>
+      </div>
+      <button
+        bind:this={headerButton}
+        class="toast-header"
+        class:resting-side={state === 'resting' || state === 'preparing'}
+        type="button"
+        style="height: {clipTitle && state !== 'unrolled'
+          ? topConstainedHeight
+          : topUnconstrainedHeight}px;"
+        on:mousedown={conditionallyDoNotTakeFocus}
+        on:click={onHeaderClicked}
+        on:focus={onHeaderFocus}
+        on:blur={onHeaderBlur}
+        on:keydown={onHeaderKeyDown}
+      >
+        <span class="toast-category-icon">
+          <svelte:component this={icon} {category} />
+        </span>
+        <div class="toast-text">
+          <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
+          <div
+            class:toast-flex-row={clipTitle &&
+              !isExpanded &&
+              status &&
+              (isString(status) || isString(status.collapsed)) &&
+              showStatusInline}
+          >
+            <p
+              class="toast-topic"
+              class:toast-constrain-text={clipTitle && (state === 'resting' || state === 'preparing')}
+            >
+              {topic}
+            </p>
+            {#if status && (isString(status) || isString(status.collapsed))}
+              <p
+                class="toast-status"
+                class:toast-no-margin={clipTitle &&
+                  status &&
+                  (isString(status) || isString(status.collapsed)) &&
+                  showStatusInline}
+              >
+                {isString(status) ? status : status.collapsed}
+              </p>
+            {/if}
+          </div>
+        </div>
+        <button
+          class="toast-close-button"
+          type="button"
+          aria-label="Close"
+          on:mousedown={doNotTakeFocus}
+          on:click={onCloseClicked}
+        >
+          <div class="toast-close-icon"><CloseIcon /></div>
+        </button>
+      </button>
+    </div>
+    <div
+      style="height: {state === 'unrolled' ? bottomHeight : 0}px;"
+      class="toast-bottom"
+      class:not-unrolled={state !== 'unrolled'}
+      class:transition={ready}
+      on:transitionend={onEndTransition}
+    >
       {#if showMidSeparator === 'always' || (showMidSeparator === 'when-no-category' && !category)}
         <div class="mid-separator"></div>
       {/if}
@@ -328,125 +455,37 @@
   </div>
 </div>
 
-<div
-  class="toast-item"
-  class:unrolling={state === 'unrolling' || state === 'unrolled'}
-  class:toast-item-in-focus={isHeaderFocused}
-  tabindex="-1"
-  role="alert"
->
-  <div class="toast-top">
-    <div
-      class="toast-header-underlay"
-      class:resting={state === 'resting'}
-      class:preparing={state === 'preparing'}
-      class:unrolling={state === 'unrolling' || state === 'unrolled'}
-      class:toast-item-in-focus={isHeaderFocused}
-      on:transitionend={onEndTransition}
-    >
-      {#if taskProgress !== undefined}
-        <progress value={taskProgress} max={taskScale} />
-      {:else if !isExpanded && showExpiryCountdown && !isClicked && !!expiresIn}
-        {#if !Number.isNaN(expiresIn)}
-          <progress value={$expiryCountdown} />
-        {:else if Number.isNaN(expiresIn)}
-          <progress></progress>
-        {/if}
-      {/if}
-    </div>
-    <button
-      bind:this={headerButton}
-      class="toast-header"
-      class:resting-side={state === 'resting' || state === 'preparing'}
-      type="button"
-      style="height: {clipTitle && state !== 'unrolled'
-        ? topConstainedHeight
-        : topUnconstrainedHeight}px;"
-      on:mousedown={conditionallyDoNotTakeFocus}
-      on:click={onHeaderClicked}
-      on:focus={onHeaderFocus}
-      on:blur={onHeaderBlur}
-      on:keydown={onHeaderKeyDown}
-    >
-      <span class="toast-category-icon">
-        <svelte:component this={icon} {category} />
-      </span>
-      <div class="toast-text">
-        <h3 class="toast-title"><svelte:component this={title} {category} /></h3>
-        <div
-          class:toast-flex-row={clipTitle &&
-            !isExpanded &&
-            status &&
-            (isString(status) || isString(status.collapsed)) &&
-            showStatusInline}
-        >
-          <p
-            class="toast-topic"
-            class:toast-constrain-text={clipTitle && (state === 'resting' || state === 'preparing')}
-          >
-            {topic}
-          </p>
-          {#if status && (isString(status) || isString(status.collapsed))}
-            <p
-              class="toast-status"
-              class:toast-no-margin={clipTitle &&
-                status &&
-                (isString(status) || isString(status.collapsed)) &&
-                showStatusInline}
-            >
-              {isString(status) ? status : status.collapsed}
-            </p>
-          {/if}
-        </div>
-      </div>
-      <button
-        class="toast-close-button"
-        type="button"
-        aria-label="Close"
-        on:mousedown={doNotTakeFocus}
-        on:click={onCloseClicked}
-      >
-        <div class="toast-close-icon"><CloseIcon /></div>
-      </button>
-    </button>
-  </div>
-  <div
-    style="height: {state === 'unrolled' ? bottomHeight : 0}px;"
-    class="toast-bottom"
-    class:not-unrolled={state !== 'unrolled'}
-    class:transition={ready}
-    on:transitionend={onEndTransition}
-  >
-    {#if showMidSeparator === 'always' || (showMidSeparator === 'when-no-category' && !category)}
-      <div class="mid-separator"></div>
-    {/if}
-    <div class="toast-content">
-      {#if Array.isArray(body)}
-        {#each body as paragraph}
-          <p>{paragraph}</p>
-        {/each}
-      {:else if isString(body)}
-        <p>{body}</p>
-      {:else}
-        <svelte:component this={body} />
-      {/if}
-      {#if status && (isString(status) || isString(status.expanded))}
-        <p class="toast-status">{isString(status) ? status : status.expanded}</p>
-      {/if}
-    </div>
-  </div>
-</div>
-
 <style>
   .toast-item {
     display: flex;
-    flex-direction: column;
     position: relative;
     border-radius: var(--toast-border-radius);
     pointer-events: all;
     width: var(--toast-width);
     font-size: var(--toast-font-size);
     color: var(--toast-text-color);
+  }
+
+  .toast-item.toast-item-in-focus {
+    border-radius: var(--toast-focus-border-radius, var(--toast-border-radius));
+  }
+
+  .toast-column {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    flex: 0 1 auto;
+  }
+
+  .toast-left-edge {
+    width: var(--toast-left-edge-width, 0);
+    background-color: var(--toast-accent-color);
+  }
+
+  .toast-right-edge {
+    width: var(--toast-right-edge-width, 0);
+    background-color: var(--toast-accent-color);
   }
 
   .toast-item.unrolling {
@@ -471,7 +510,6 @@
 
   .toast-bottom {
     overflow: hidden;
-    width: var(--toast-width);
   }
 
   .toast-bottom.not-unrolled {
@@ -498,6 +536,11 @@
     overflow: hidden;
     z-index: 0;
     transition: var(--toast-underlay-transition);
+    display: flex;
+  }
+
+  .toast-header-underlay.toast-item-in-focus {
+    border-radius: var(--toast-focus-border-radius, var(--toast-border-radius));
   }
 
   .toast-header-underlay.resting {
@@ -614,12 +657,16 @@
     transition: none;
   }
   progress[value]::-webkit-progress-value {
-    background-color: var(--toast-progress-color);
+    background: var(--toast-progress-color);
     transition: none;
+    border-left: solid 1px var(--toast-background-color);
+    border-right: solid 1px var(--toast-background-color);
   }
   progress[value]::-moz-progress-bar {
-    background-color: var(--toast-progress-color);
+    background: var(--toast-progress-color);
     transition: none;
+    border-left: solid 1px var(--toast-background-color);
+    border-right: solid 1px var(--toast-background-color);
   }
 
   .toast-text {
