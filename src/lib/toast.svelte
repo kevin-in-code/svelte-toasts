@@ -357,17 +357,17 @@
       >
         <div class="toast-left-edge"></div>
         <div class="toast-column">
-        {#if taskProgress !== undefined}
-          {#if taskProgress !== taskScale}
-            <progress value={taskProgress} max={taskScale} />
+          {#if taskProgress !== undefined}
+            {#if taskProgress !== taskScale}
+              <progress value={taskProgress} max={taskScale} />
+            {/if}
+          {:else if !isExpanded && showExpiryCountdown && !isClicked && !!expiresIn}
+            {#if !Number.isNaN(expiresIn)}
+              <progress value={$expiryCountdown} />
+            {:else if Number.isNaN(expiresIn)}
+              <progress></progress>
+            {/if}
           {/if}
-        {:else if !isExpanded && showExpiryCountdown && !isClicked && !!expiresIn}
-          {#if !Number.isNaN(expiresIn)}
-            <progress value={$expiryCountdown} />
-          {:else if Number.isNaN(expiresIn)}
-            <progress></progress>
-          {/if}
-        {/if}
         </div>
         <div class="toast-right-edge"></div>
       </div>
@@ -399,7 +399,8 @@
           >
             <p
               class="toast-topic"
-              class:toast-constrain-text={clipTitle && (state === 'resting' || state === 'preparing')}
+              class:toast-constrain-text={clipTitle &&
+                (state === 'resting' || state === 'preparing')}
             >
               {topic}
             </p>

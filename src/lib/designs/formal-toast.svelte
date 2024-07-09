@@ -26,18 +26,23 @@
 <div
   style="
     --toast-border-radius: none;
-    --toast-box-shadow: -0.325em 0 var(--toast-focus-color), 0.5em 0.7em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
+    --toast-focus-border-radius: 0.5em;
+    --toast-box-shadow: 0.5em 0.7em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
     --toast-font-size: 87.5%;
     --toast-header-padding: 0.75em;
     --toast-icon-gap: 0.75em;
     --toast-icon-size: 1.5em;
-    --toast-in-focus-box-shadow: -0.325em 0 var(--toast-focus-color), 0.325em 0 var(--toast-focus-color), 0.5em 0.7em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
-    --toast-in-focus-outline: none;
+    --toast-in-focus-box-shadow: 0.5em 0.7em 1em 0.0625em hsla(0, 0%, 0%, 0.5);
+    --toast-in-focus-outline: dashed 2px var(--toast-focus-color);
     --toast-mid-separator-thickness: 0.325em;
     --toast-underlay-contracted-transform: none;
     --toast-underlay-expanded-transform: none;
     --toast-underlay-transition: none;
     --toast-width: 22em;
+    --toast-left-edge-width: 0.325em;
+    --toast-left-edge-radius: 0.325em;
+    --toast-right-edge-width: 0.325em;
+    --toast-right-edge-radius: 0.325em;
   "
 >
   <Toast

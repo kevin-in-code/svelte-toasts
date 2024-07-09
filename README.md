@@ -11,7 +11,7 @@
 
 A neat, feature rich and customisable implementation of toasts in svelte.
 
-![general toast example](./images/without-category.webp) ![success toast example](./images/success.webp)
+![general toast example](./images/classic-candy-light-no-category.webp) ![success toast example](./images/action-candy-light-success.webp)
 
 ## Installation
 
@@ -49,15 +49,15 @@ npm i @in-code/svelte-toasts
 <button on:click={giveBlessing}>Raise Toast!</button>
 ```
 
-## Themes
+## Themes & Designs
 
-Four themes are provided: _action_, _marker_, _candy_ and _crisp_. The _action_ and _marker_ designs are light and visually similar themes. _Action_ evokes more visual interest with its slanted design at the expense of occassionally contracted text, whereas _marker_ is straightforward and does not constrain topic text in its collapsed view. The two remaining themes, _candy_ and _crisp_ are more distinct. All of the designs support keyboard interaction, and have a suitable visual style for showing which element has keyboard focus.
+Four themes are provided to give a good selection of default colour options. These themes are _marker_, _candy_, _crisp_, and _chalk_. All of these can serve well in light an dark settings, but some may be better suited to one or the other.
 
-![action theme](./images/action-on-light.webp) ![marker theme](./images/marker-on-light.webp)
+Toast design selection is separate from theme selection. There are three standard designs: the _classic_ design with its elegant use of colour and rounded corners, _formal_ with austere squared edges, and _action_ with its compact slanted aspect to evoke interest. All of the designs support keyboard interaction, and have a suitable visual style for showing which element has keyboard focus.
 
-![candy theme](./images/candy-on-light.webp) ![crisp theme](./images/crisp-on-light.webp)
+Some examples are shown below. The project includes a demo application that may be useful for visual elements further.
 
-Some visual elements of the _crisp_ theme design are inspired from the flat design of [@mzohaibqc/svelte-toasts](https://github.com/mzohaibqc/svelte-toasts). Although similar, @in-code/svelte-toasts and @mzohaibqc/svelte-toasts are independent and each has distinguishing features. It may be valuable to compare the libraries to determine which is more suitable for a given project.
+![classic marker](./images/classic-marker-light.webp) ![formal chalk](./images/formal-chalk-dark.webp) ![action crisp](./images/action-crisp-light.webp)
 
 ## License
 
