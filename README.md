@@ -9,7 +9,7 @@
 
 [![npm version](https://badgen.net/npm/v/@in-code/svelte-toasts)](https://npm.im/@in-code/signal-effects) [![npm downloads](https://badgen.net/npm/dm/@in-code/signal-effects)](https://npm.im/@in-code/svelte-toasts)
 
-A neat, feature rich and customisable implementation of toasts in svelte.
+Feature-rich, customisable toasts in svelte.
 
 ![general toast example](./images/classic-candy-light-no-category.webp) ![success toast example](./images/action-candy-light-success.webp)
 
