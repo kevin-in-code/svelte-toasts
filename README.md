@@ -51,6 +51,8 @@ npm i @in-code/svelte-toasts
 
 ## Themes & Designs
 
+For a quick look at the standard themes and designs, explore the [demo application](https://kevin-in-code.github.io/svelte-toasts/demo).
+
 Four themes are provided to give a good selection of default colour options. These themes are _marker_, _candy_, _crisp_, and _chalk_. All of these can serve well in light an dark settings, but some may be better suited to one or the other.
 
 Toast design selection is separate from theme selection. There are three standard designs: the _classic_ design with its elegant use of colour and rounded corners, _formal_ with austere squared edges, and _action_ with its compact slanted aspect to evoke interest. All of the designs support keyboard interaction, and have a suitable visual style for showing which element has keyboard focus.

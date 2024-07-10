@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
     
-		<link href="./_app/immutable/assets/2.BcldLdVo.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.B5kBCjOo.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/entry.DFD5Kpbq.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.rcT6qnWv.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.DEOBo3Zd.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.Dnjr5Vfg.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index.CHDkXYLS.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/0.Cr-egQE4.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/2.CEn5NzrD.js">
+		<link href="./internal/immutable/assets/2.BcldLdVo.css" rel="stylesheet">
+		<link rel="modulepreload" href="./internal/immutable/entry/start.L9Hm8tGw.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/entry.CV7iMDe-.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/scheduler.rcT6qnWv.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/index.DEOBo3Zd.js">
+		<link rel="modulepreload" href="./internal/immutable/entry/app.CmKrIws-.js">
+		<link rel="modulepreload" href="./internal/immutable/chunks/index.CHDkXYLS.js">
+		<link rel="modulepreload" href="./internal/immutable/nodes/0.Cr-egQE4.js">
+		<link rel="modulepreload" href="./internal/immutable/nodes/2.CP2RzI9o.js">
   </head>
   <body data-sveltekit-preload-data="hover">
     <div>   <div class="toast-view svelte-11rc7bx" style="--toast-view-margin: 2em"><div class="top svelte-11rc7bx"><div class="list svelte-6zq14e"></div></div> </div> <div class="panel svelte-blnl6p"><div class="svelte-blnl6p"></div> <div class="controls svelte-blnl6p"><div class="row gap svelte-blnl6p"><label class="primary-color svelte-blnl6p"><input type="checkbox">
@@ -22,17 +22,17 @@
 			
 			<script>
 				{
-					__sveltekit_31w9kk = {
+					__sveltekit_awccfv = {
 						base: new URL(".", location).pathname.slice(0, -1)
 					};
 
 					const element = document.currentScript.parentElement;
 
-					const data = [{"type":"data","data":null,"uses":{}},null];
+					const data = [{"type":"data","data":null,"uses":{},"slash":"always"},null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.B5kBCjOo.js"),
-						import("./_app/immutable/entry/app.Dnjr5Vfg.js")
+						import("./internal/immutable/entry/start.L9Hm8tGw.js"),
+						import("./internal/immutable/entry/app.CmKrIws-.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
