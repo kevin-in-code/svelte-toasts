@@ -7,7 +7,7 @@
 
 # @in-code/svelte-toasts
 
-[![npm version](https://badgen.net/npm/v/@in-code/svelte-toasts)](https://npm.im/@in-code/signal-effects) [![npm downloads](https://badgen.net/npm/dm/@in-code/signal-effects)](https://npm.im/@in-code/svelte-toasts)
+[![npm version](https://badgen.net/npm/v/@in-code/svelte-toasts)](https://npm.im/@in-code/svelte-toasts) [![npm downloads](https://badgen.net/npm/dm/@in-code/svelte-toasts)](https://npm.im/@in-code/svelte-toasts)
 
 Feature-rich, customisable toasts in svelte.
 
