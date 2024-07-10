@@ -11,6 +11,9 @@
 
 Feature-rich, customisable toasts in svelte.
 
+For a quick look at the standard themes and designs, explore the [demo application](https://kevin-in-code.github.io/svelte-toasts/demo).
+
+
 ![general toast example](./images/classic-candy-light-no-category.webp) ![success toast example](./images/action-candy-light-success.webp)
 
 ## Installation
@@ -50,8 +53,6 @@ npm i @in-code/svelte-toasts
 ```
 
 ## Themes & Designs
-
-For a quick look at the standard themes and designs, explore the [demo application](https://kevin-in-code.github.io/svelte-toasts/demo).
 
 Four themes are provided to give a good selection of default colour options. These themes are _marker_, _candy_, _crisp_, and _chalk_. All of these can serve well in light an dark settings, but some may be better suited to one or the other.
 
