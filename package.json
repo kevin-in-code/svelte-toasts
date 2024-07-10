@@ -1,5 +1,5 @@
 {
-  "name": "svelte-toasts",
+  "name": "@in-code/svelte-toasts",
   "version": "0.0.1",
   "scripts": {
     "demo": "vite build && http-server -o demo",
