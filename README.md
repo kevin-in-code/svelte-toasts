@@ -14,7 +14,7 @@ Feature-rich, customisable toasts in svelte.
 For a quick look at the standard themes and designs, explore the [demo application](https://kevin-in-code.github.io/svelte-toasts/demo).
 
 
-![general toast example](./images/classic-candy-light-no-category.webp) ![success toast example](./images/action-candy-light-success.webp)
+![general toast example](images/classic-candy-light-no-category.webp) ![success toast example](images/action-candy-light-success.webp)
 
 ## Installation
 
@@ -60,7 +60,7 @@ Toast design selection is separate from theme selection. There are three standar
 
 Some examples are shown below. The project includes a demo application that may be useful for visual elements further.
 
-![classic marker](./images/classic-marker-light.webp) ![formal chalk](./images/formal-chalk-dark.webp) ![action crisp](./images/action-crisp-light.webp)
+![classic marker](images/classic-marker-light.webp) ![formal chalk](images/formal-chalk-dark.webp) ![action crisp](images/action-crisp-light.webp)
 
 ## License
 
