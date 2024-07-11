@@ -173,7 +173,13 @@ export const updateToasts = (fieldsToUpdate: (toast: ToastItem) => ToastUpdateFi
 };
 
 export const raiseToast = (fields: ToastInitFields): ToastControl => {
-  const toast = addToast(fields);
+  const { topic, body, ...rest } = fields;
+  const shortenedTopic = topic.split(/[,.] /)[0];
+  const toast = addToast({
+    ...rest,
+    topic: !!body ? topic : shortenedTopic,
+    body: !body && shortenedTopic !== topic ? topic : body,
+  });
   return {
     dismiss: toast.dismiss,
     focus: toast.focus,
