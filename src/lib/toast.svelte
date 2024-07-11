@@ -726,6 +726,7 @@
 
   button {
     border: none;
+    border-radius: var(--toast-border-radius);
     padding: 0;
     margin: 0;
     background-color: inherit;
