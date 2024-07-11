@@ -17,6 +17,7 @@
   export let title: ToastTitleComponent | undefined = undefined;
   export let icon: ToastIconComponent | undefined = undefined;
 
+  export let position: 'absolute' | 'fixed' = 'fixed';
   export let margin = '2em';
   export let zone: ToastViewZone = 'top-right';
   export let enter: ToastTransitionName = 'fade';
@@ -26,7 +27,7 @@
 </script>
 
 <slot />
-<div class="toast-view" style="--toast-view-margin: {margin}">
+<div class="toast-view" style="--toast-view-margin: {margin}; position: {position};">
   <div class={zone}>
     <ToastList
       {theme}
