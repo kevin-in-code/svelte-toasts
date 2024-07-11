@@ -731,5 +731,6 @@
     background-color: inherit;
     font-size: inherit;
     text-align: inherit;
+    width: auto;
   }
 </style>
