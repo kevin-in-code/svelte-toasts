@@ -29,7 +29,8 @@
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "test:integration": "playwright test",
-    "test:unit": "vitest"
+    "test:unit": "vitest",
+    "semantic-release": "semantic-release"
   },
   "exports": {
     ".": {
@@ -42,6 +43,9 @@
   },
   "devDependencies": {
     "@playwright/test": "1.45.1",
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/npm": "12.0.1",
     "@sveltejs/adapter-auto": "3.2.2",
     "@sveltejs/adapter-static": "3.0.2",
     "@sveltejs/kit": "2.5.18",
@@ -57,6 +61,7 @@
     "prettier": "3.3.2",
     "prettier-plugin-svelte": "3.2.5",
     "publint": "0.2.8",
+    "semantic-release": "24.0.0",
     "svelte": "4.2.18",
     "svelte-check": "3.8.4",
     "tslib": "2.6.3",

@@ -14,18 +14,19 @@ Contribution of code improvements to this library are most welcome. Here are som
 - Create a topic branch with your changes
   - Only make changes relevant to your issue
   - Follow existing code patterns, style, and formatting
+- Use conventional commits in your commit messages
+
 - Create a pull request
-  - The PR exists is created in your fork
-  - The base repository of the PR is this project, not your fork
-  - Use conventional commit formatting for your PR title and description
+  - The PR should be created in your own fork
+  - However, the base repository of the PR should be this project, not your fork
 
-## Use Conventional Commits for PRs
+## Use Conventional Commits
 
-_These conventions do not apply to your own local commits._
+- Your commits should follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format
 
-- Your PR title and description should follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format, but commits on your own feature branches can follow any convention
+- If you have not used conventional commits in your feature branch, you may still contribute. In this case, please format your PR title and description in the conventional commit format. This will help the creating of an appropriately formatted merge commit.
 
-- The format of your PR title should be as follows
+- The conventional commit format is as follows
 
   `<type>[(<scope>)][!]: <description>`
 
@@ -57,10 +58,10 @@ _These conventions do not apply to your own local commits._
   [other git trailer-formatted footers]
   ```
 
-- PR titles should always be written in imperative present tense, e.g. _add batch function to allow atomic changes_
+- Commit titles should always be written in imperative present tense, e.g. _add batch function to allow atomic changes_
 
-- PR titles should be written in lower case whenever possible, but the casing of any program identifiers must be retained
+- Commit titles should be written in lower case whenever possible, but the casing of any program identifiers must be retained
 
 - All breaking changes must be signalled with the allowed exclamation mark (!) in the PR title
 
-- A breaking change should also be signalled with a `BREAKING CHANGE` footer in the message body if the PR description is not empty
+- A breaking change should also be signalled with a `BREAKING CHANGE` footer in the message body if the commit body is not empty
