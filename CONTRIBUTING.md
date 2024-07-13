@@ -62,6 +62,6 @@ Contribution of code improvements to this library are most welcome. Here are som
 
 - Commit titles should be written in lower case whenever possible, but the casing of any program identifiers must be retained
 
-- All breaking changes must be signalled with the allowed exclamation mark (!) in the PR title
+- Every breaking change must be signalled with a `BREAKING CHANGE` footer in the message body, and a text description must be provided, as this will be automatically recorded in the CHANGELOG.md file
 
-- A breaking change should also be signalled with a `BREAKING CHANGE` footer in the message body if the commit body is not empty
+- Breaking changes can be also be signalled with the allowed exclamation mark (!) in the commit title, but a `BREAKING CHANGE` footer and description are still required
