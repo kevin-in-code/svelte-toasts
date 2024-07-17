@@ -25,7 +25,12 @@ module.exports = {
     [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md", "package.json", "npm-shrinkwrap.json"]
+        "assets": [
+          "CHANGELOG.md",
+          "demo",
+          "npm-shrinkwrap.json",
+          "package.json",
+        ]
       }
     ],
     "@semantic-release/github",
