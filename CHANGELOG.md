@@ -1,3 +1,9 @@
+## [2.0.1](https://github.com/kevin-in-code/svelte-toasts/compare/v2.0.0...v2.0.1) (2024-07-17)
+
+### Bug Fixes
+
+* improve contrast in chalk theme ([349b8b7](https://github.com/kevin-in-code/svelte-toasts/commit/349b8b75973635bb11b288351c593c6a4d7c2fa0))
+
 # [2.0.0](https://github.com/kevin-in-code/svelte-toasts/compare/v1.0.2...v2.0.0) (2024-07-13)
 
 
