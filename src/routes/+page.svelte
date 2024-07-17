@@ -167,7 +167,7 @@
 </script>
 
 <ToastView {theme} {design} {clickTakesFocus} zone="top" />
-<div class="panel" class:dark={mode === 'dark'}>
+<div class="panel" class:dark={mode === 'dark'} data-theme={mode}>
   <div></div>
   <div class="controls">
     <div class="row gap">
