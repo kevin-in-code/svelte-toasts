@@ -6,3 +6,5 @@ test-results
 *.log
 .temp
 .svelte-kit
+*.env
+*.env.*

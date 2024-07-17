@@ -60,16 +60,16 @@ const chalk: ToastTheme = {
   colors: {
     default: {
       accent: '#9878d1',
-      background: '#61707a',
+      background: '#506070',
       text: '#e5e5e5',
       contrast: '#393939',
       contentBackground: '#ebebe8',
       contentText: '#393939',
     },
-    success: { accent: '#78d18b', background: '#61707a', icon: '#78d18b' },
-    information: { accent: '#6caee5', background: '#61707a', icon: '#6caee5' },
-    warning: { accent: '#e5d36c', background: '#61707a', icon: '#e5d36c' },
-    error: { accent: '#e57b6c', background: '#61707a', icon: '#e57b6c' },
+    success: { accent: '#78d18b', icon: '#78d18b' },
+    information: { accent: '#6caee5', icon: '#6caee5' },
+    warning: { accent: '#e5d36c', icon: '#e5d36c' },
+    error: { accent: '#e57b6c', icon: '#e57b6c' },
   },
 };
 
