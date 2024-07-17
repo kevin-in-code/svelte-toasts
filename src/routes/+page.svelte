@@ -219,6 +219,8 @@
     flex-direction: column;
     min-height: 100vh;
     align-items: stretch;
+    /* default to light background */
+    background-color: #f2f4f6;
   }
 
   .panel > :first-child {
