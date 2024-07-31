@@ -13,7 +13,6 @@ Feature-rich, customisable toasts in svelte.
 
 For a quick look at the standard themes and designs, explore the [demo application](https://kevin-in-code.github.io/svelte-toasts/demo).
 
-
 ![general toast example](images/classic-candy-light-no-category.webp) ![success toast example](images/action-candy-light-success.webp)
 
 ## Installation

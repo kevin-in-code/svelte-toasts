@@ -177,7 +177,7 @@ export const raiseToast = (fields: ToastInitFields): ToastControl => {
   const shortenedTopic = topic.split(/[,.] /)[0];
   const toast = addToast({
     ...rest,
-    topic: !!body ? topic : shortenedTopic,
+    topic: body ? topic : shortenedTopic,
     body: !body && shortenedTopic !== topic ? topic : body,
   });
   return {
