@@ -1,3 +1,9 @@
+## [2.0.2](https://github.com/kevin-in-code/svelte-toasts/compare/v2.0.1...v2.0.2) (2024-07-31)
+
+### Bug Fixes
+
+* a11y issue arising from placement of close button ([3860536](https://github.com/kevin-in-code/svelte-toasts/commit/3860536667da1524dfe73a82105eebd2fa65322c))
+
 ## [2.0.1](https://github.com/kevin-in-code/svelte-toasts/compare/v2.0.0...v2.0.1) (2024-07-17)
 
 ### Bug Fixes
