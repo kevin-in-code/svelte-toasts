@@ -133,7 +133,7 @@ const computeUpdatedToast = (now: Date, toast: ToastItem, fieldsToUpdate: ToastU
   return {
     ...toast,
     ...remainingFields,
-    isExpanded: setIsExpanded ? isExpanded ?? false : toast.isExpanded,
+    isExpanded: setIsExpanded ? (isExpanded ?? false) : toast.isExpanded,
     expiresAt: clearExpiresIn
       ? undefined
       : !expiresIn
