@@ -2,37 +2,32 @@
  * @type {import('semantic-release').GlobalConfig}
  */
 module.exports = {
-  "plugins": [
+  plugins: [
     [
-      "@semantic-release/commit-analyzer",
+      '@semantic-release/commit-analyzer',
       {
-				"preset": "conventionalcommits"
-			}
+        preset: 'conventionalcommits',
+      },
     ],
     [
-      "@semantic-release/release-notes-generator",
+      '@semantic-release/release-notes-generator',
       {
-				"preset": "conventionalcommits"
-			}
+        preset: 'conventionalcommits',
+      },
     ],
     [
-      "@semantic-release/changelog",
+      '@semantic-release/changelog',
       {
-        "changelogFile": "CHANGELOG.md"
-      }
+        changelogFile: 'CHANGELOG.md',
+      },
     ],
-    "@semantic-release/npm",
+    '@semantic-release/npm',
     [
-      "@semantic-release/git",
+      '@semantic-release/git',
       {
-        "assets": [
-          "CHANGELOG.md",
-          "demo",
-          "npm-shrinkwrap.json",
-          "package.json",
-        ]
-      }
+        assets: ['CHANGELOG.md', 'demo', 'npm-shrinkwrap.json', 'package.json'],
+      },
     ],
-    "@semantic-release/github",
-  ]
+    '@semantic-release/github',
+  ],
 };
