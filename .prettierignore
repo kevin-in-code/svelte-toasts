@@ -5,6 +5,7 @@ dist
 demo
 *.min.*
 .vscode
+*.md
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml
 package-lock.json
