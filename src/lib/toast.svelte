@@ -271,10 +271,12 @@
               {/if}
             </div>
           </div>
+        </button>
+        <div class="toast-close-container">
           <button class="toast-close-button" type="button" aria-label="Close">
             <div class="toast-close-icon"><CloseIcon /></div>
           </button>
-        </button>
+        </div>
       </div>
     </div>
   </div>
@@ -305,10 +307,12 @@
               {/if}
             </div>
           </div>
+        </button>
+        <div class="toast-close-container">
           <button class="toast-close-button" type="button" aria-label="Close">
             <div class="toast-close-icon"><CloseIcon /></div>
           </button>
-        </button>
+        </div>
       </div>
     </div>
   </div>
@@ -417,6 +421,8 @@
             {/if}
           </div>
         </div>
+      </button>
+      <div class="toast-close-container">
         <button
           class="toast-close-button"
           type="button"
@@ -426,7 +432,7 @@
         >
           <div class="toast-close-icon"><CloseIcon /></div>
         </button>
-      </button>
+      </div>
     </div>
     <div
       style="height: {state === 'unrolled' ? bottomHeight : 0}px;"
@@ -583,6 +589,13 @@
     border-radius: 0;
   }
 
+  .toast-close-container {
+    position: absolute;
+    top: var(--toast-header-padding);
+    right: var(--toast-header-padding);
+    z-index: 1;
+  }
+
   .toast-category-icon {
     font-size: var(--toast-icon-size);
     line-height: 0;
@@ -673,6 +686,7 @@
   .toast-text {
     flex-grow: 1;
     min-width: 0;
+    padding-right: calc(var(--toast-icon-gap) + var(--toast-icon-size));
   }
 
   .toast-constrain-text {
